@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alma Salud - Viajes Egresados (Admin)</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#003D6B;--blue:#00508C;--gold:#F5A623;--gold2:#E09612;
+  --red:#DC2626;--red-bg:#FEF2F2;--red-border:#FCA5A5;
+  --green:#16A34A;--green-bg:#F0FDF4;--green-border:#86EFAC;
+  --border:#dde3f0;--text:#1A1A1A;--muted:#6b7494;--bg:#F7F9FC;
+}
+body{font-family:'Poppins','Inter',sans-serif;color:var(--text);font-size:15px;background:#eef2f7;min-height:100vh}
+.wrap{max-width:680px;margin:0 auto;background:white;min-height:100vh;box-shadow:0 0 40px rgba(0,0,0,.08)}
+.header{background:var(--navy);padding:20px 28px;display:flex;align-items:center;gap:18px;border-bottom:3px solid var(--gold)}
+.header img{height:68px;width:auto;object-fit:contain}
+.hdr-sep{width:1.5px;height:50px;background:rgba(255,255,255,.25);flex-shrink:0}
+.hdr-text{flex:1;display:flex;flex-direction:column;gap:4px}
+.hdr-title{font-size:20px;font-weight:700;color:#fff;letter-spacing:.5px}
+.hdr-sub{font-size:12px;color:var(--gold);font-weight:500}
+.hdr-viaje{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:8px 14px;text-align:right;cursor:pointer;flex-shrink:0;transition:.2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.hdr-viaje:hover{background:rgba(255,255,255,.18)}
+.hdr-viaje-label{font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:1px}
+.hdr-viaje-value{font-size:13px;font-weight:600;color:#fff;margin-top:2px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hdr-viaje-edit{font-size:11px;color:var(--gold);margin-top:2px}
+.tabs{display:flex;background:var(--navy);border-bottom:3px solid var(--gold)}
+.tab{flex:1;padding:13px 8px;font-size:14px;font-weight:600;border:none;background:none;cursor:pointer;color:rgba(255,255,255,.45);border-bottom:3px solid transparent;margin-bottom:-3px;transition:.2s;font-family:'Poppins',sans-serif;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.tab:hover:not(.active){color:rgba(255,255,255,.75)}
+.body{padding:18px;background:var(--bg)}
+.sec{display:none}.sec.active{display:block}
+.card{background:#fff;border:.5px solid var(--border);border-radius:12px;padding:18px;margin-bottom:14px}
+.section-title{font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid var(--gold);display:inline-block}
+.field{margin-bottom:14px}.field:last-child{margin-bottom:0}
+label{display:block;font-size:11px;font-weight:600;color:var(--navy);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+input,select,textarea{width:100%;font-size:16px;padding:12px 14px;border:1.5px solid var(--border);border-radius:9px;background:#fff;color:var(--text);transition:border-color .2s;font-family:'Poppins','Inter',sans-serif;-webkit-appearance:none;appearance:none}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue)}
+textarea{resize:vertical;min-height:80px}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7494' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn-primary{width:100%;padding:14px;background:var(--navy);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;transition:.2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.btn-primary:active{background:var(--blue)}
+.btn-primary:disabled{background:#aaa;cursor:not-allowed}
+.btn-gold{padding:10px 16px;background:var(--gold);color:var(--navy);border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;transition:.2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.btn-gold:active{background:var(--gold2)}
+.btn-outline{padding:10px 16px;background:#fff;color:var(--navy);border:1.5px solid var(--navy);border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;transition:.2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.btn-outline:active{background:var(--bg)}
+.btn-sm{padding:6px 12px;font-size:12px;font-weight:600;border:none;border-radius:7px;cursor:pointer;font-family:'Poppins',sans-serif;-webkit-tap-highlight-color:transparent;touch-action:manipulation;white-space:nowrap}
+.btn-copy-sm{background:var(--bg);color:var(--navy);border:1px solid var(--border)}
+.btn-copy-sm.done{background:#e8edf8}
+.btn-del-sm{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
+.alert{border-radius:10px;padding:12px 16px;font-size:14px;font-weight:500;margin-bottom:14px;display:none}
+.alert-ok{background:var(--green-bg);border:1.5px solid var(--green-border);color:#14532d}
+.alert-err{background:var(--red-bg);border:1.5px solid var(--red-border);color:#7f1d1d}
+.offline-notice{background:#FFF8E7;border:1px solid var(--gold);border-radius:8px;padding:9px 14px;font-size:12px;color:#7a4f00;margin-bottom:12px;display:none;align-items:center;gap:8px}
+.offline-notice.show{display:flex}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.stat{background:#fff;border:.5px solid var(--border);border-top:3px solid var(--navy);border-radius:10px;padding:12px}
+.stat.red{border-top-color:var(--red)}.stat.red .stat-value{color:var(--red)}
+.stat.gold{border-top-color:var(--gold)}
+.stat-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.stat-value{font-size:24px;font-weight:700;color:var(--navy)}
+.toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.toolbar-actions{display:flex;gap:8px;flex-wrap:wrap}
+.add-row{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;background:var(--bg);border-radius:10px;padding:14px;margin-bottom:12px}
+.add-row .field{margin-bottom:0}
+.participant{display:flex;align-items:flex-start;gap:10px;padding:13px 0;border-bottom:.5px solid var(--border);flex-wrap:wrap}
+.participant:last-child{border-bottom:none}
+.part-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:6px}
+.part-dot.ok{background:var(--green)}
+.part-dot.pend{background:var(--gold)}
+.part-info{flex:1;min-width:0}
+.part-name{font-size:15px;font-weight:600;color:var(--navy)}
+.part-contact{font-size:12px;color:var(--muted);margin-top:1px}
+.part-link{font-size:10px;color:var(--muted);word-break:break-all;margin-top:4px;font-family:monospace;background:var(--bg);padding:3px 7px;border-radius:5px;display:block;line-height:1.5}
+.part-badge{font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;flex-shrink:0;margin-top:2px}
+.pb-ok{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+.pb-pend{background:#fff4e0;color:#7a4f00;border:1px solid var(--gold)}
+.part-actions{display:flex;gap:5px;flex-shrink:0;align-items:flex-start;flex-wrap:wrap}
+.record{border-bottom:.5px solid var(--border);padding:12px 0}.record:last-child{border-bottom:none}
+.rec-header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:5px}
+.rec-name{font-size:15px;font-weight:600;color:var(--navy)}
+.rec-date{font-size:12px;color:var(--muted);flex-shrink:0}
+.badges{display:flex;gap:5px;flex-wrap:wrap}
+.badge{font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600}
+.b-der{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
+.b-motivo{background:#e8edf8;color:#003D6B}
+.b-prof{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+.loading-wrap{display:flex;align-items:center;gap:12px;padding:20px 0;color:var(--muted);font-size:14px}
+.spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--navy);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:2rem;color:var(--muted);font-size:14px}
+.import-preview{background:var(--bg);border-radius:9px;padding:12px;margin:10px 0;max-height:180px;overflow-y:auto;font-size:13px}
+.import-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:.5px solid var(--border)}
+.import-row:last-child{border-bottom:none}
+.import-err{font-size:12px;color:var(--red);margin-top:6px}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;align-items:center;justify-content:center}
+.overlay.show{display:flex}
+.modal{background:#fff;border-radius:16px;padding:26px 22px;max-width:440px;width:92%;box-shadow:0 20px 60px rgba(0,0,0,.25);max-height:90vh;overflow-y:auto}
+.modal h3{font-size:18px;font-weight:700;color:var(--navy);margin-bottom:8px}
+.modal p{font-size:13px;color:var(--muted);margin-bottom:18px;line-height:1.6}
+.modal .field{margin-bottom:14px}
+.modal-btns{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:4px}
+.viaje-item{padding:11px 14px;border:1.5px solid var(--border);border-radius:9px;margin-bottom:8px;cursor:pointer;transition:.15s;-webkit-tap-highlight-color:transparent}
+.viaje-item:hover{border-color:var(--navy);background:#f0f4ff}
+.viaje-item.active{border-color:var(--navy);background:#e8edf8}
+.viaje-item-name{font-weight:600;color:var(--navy);font-size:14px}
+.viaje-item-sub{font-size:12px;color:var(--muted);margin-top:2px}
+@media(max-width:480px){
+  .header{padding:14px 16px;gap:12px;flex-wrap:wrap}
+  .header img{height:52px}
+  .hdr-sep{height:38px}
+  .hdr-title{font-size:17px}
+  .hdr-viaje{margin-left:0;width:100%;text-align:left}
+  .body{padding:14px}
+  .g2{grid-template-columns:1fr}
+  .stats-row{grid-template-columns:1fr 1fr}
+  .add-row{grid-template-columns:1fr}
+  .participant{flex-wrap:wrap}
+  .part-actions{width:100%;justify-content:flex-end}
+}
+</style>
+</head>
+<body>
+
+<!-- MODAL CREAR VIAJE -->
+<div class="overlay show" id="modal-setup">
+  <div class="modal">
+    <h3>&#x2708;&#xFE0F; Nuevo viaje de egresados</h3>
+    <p>Ingres&aacute; los datos para crear el panel de este viaje. Los datos se guardan en Google Sheets.</p>
+    <div class="field">
+      <label>Nombre de la organizadora <span style="color:#DC2626">*</span></label>
+      <input type="text" id="in-org" placeholder="Ej: Turismo Aventura S.A." autocomplete="off" autocorrect="off">
+    </div>
+    <div class="field">
+      <label>Nombre del viaje <span style="color:#DC2626">*</span></label>
+      <input type="text" id="in-viaje" placeholder="Ej: Viaje Egresados Colegio San Mart&iacute;n &mdash; Bariloche 2026" autocomplete="off" autocorrect="off">
+    </div>
+    <div id="setup-err" style="display:none;color:#DC2626;font-size:13px;margin-bottom:12px">&#9888; Complet&aacute; todos los campos.</div>
+    <div class="modal-btns">
+      <button class="btn-primary" style="width:auto;padding:12px 24px" onclick="window.crearViaje()">Crear viaje &#8594;</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CAMBIAR VIAJE -->
+<div class="overlay" id="modal-switch">
+  <div class="modal">
+    <h3>Mis viajes</h3>
+    <p>Seleccion&aacute; un viaje o cre&aacute; uno nuevo.</p>
+    <div id="switch-lista" style="max-height:220px;overflow-y:auto;margin-bottom:14px"></div>
+    <div class="modal-btns">
+      <button class="btn-outline" onclick="window.cerrarSwitch()">Cancelar</button>
+      <button class="btn-gold" onclick="window.nuevoViaje()">+ Nuevo viaje</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL IMPORTAR LISTA -->
+<div class="overlay" id="modal-import">
+  <div class="modal">
+    <h3>&#128203; Importar participantes</h3>
+    <p>Peg&aacute; la lista copiada desde Excel o WhatsApp. <strong>Una persona por l&iacute;nea.</strong> Nombre y contacto separados por tab, coma o punto y coma. El contacto es opcional.</p>
+    <div class="field">
+      <textarea id="import-texto" rows="7" placeholder="Ejemplo:
+Juan Garc&iacute;a&#9;+54 9 11 1234-5678
+Mar&iacute;a L&oacute;pez&#9;maria@email.com
+Pedro Fern&aacute;ndez" oninput="window.previsualizarImport()"></textarea>
+    </div>
+    <div id="import-preview" style="display:none">
+      <div class="import-preview" id="import-preview-list"></div>
+      <div id="import-preview-count" style="font-size:12px;color:var(--muted);margin-top:4px"></div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-outline" onclick="window.cerrarImport()">Cancelar</button>
+      <button class="btn-primary" id="btn-confirm-import" style="width:auto;padding:12px 20px" onclick="window.confirmarImport()" disabled>Importar</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="wrap">
+  <div class="header">
+    <img src="https://raw.githubusercontent.com/fabrilucen5/imagenesalmasalud/main/Alma%20Salud%20-%20Logo%202.png"
+      alt="Alma Salud"
+      onerror="this.onerror=null;this.src='https://fabrilucen5.github.io/imagenesalmasalud/Alma%20Salud%20-%20Logo%202.png'">
+    <div class="hdr-sep"></div>
+    <div class="hdr-text">
+      <span class="hdr-title">ALMA SALUD</span>
+      <span class="hdr-sub">Panel organizadora &mdash; Viajes de egresados</span>
+    </div>
+    <div class="hdr-viaje" onclick="window.abrirSwitch()">
+      <div class="hdr-viaje-label">Viaje activo</div>
+      <div class="hdr-viaje-value" id="hdr-nombre">&mdash;</div>
+      <div class="hdr-viaje-edit">&#9998; Cambiar</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="window.goTab('participantes',this)">&#128101; Participantes</button>
+    <button class="tab" onclick="window.goTab('atenciones',this)">&#127973; Atenciones</button>
+  </div>
+
+  <div class="body">
+
+    <!-- TAB PARTICIPANTES -->
+    <div class="sec active" id="sec-participantes">
+      <div class="offline-notice" id="offline-p">&#9888; Trabajando sin conexi&oacute;n. Los datos podr&iacute;an no estar actualizados.</div>
+      <div class="alert alert-ok" id="alerta-p"></div>
+      <div class="alert alert-err" id="alerta-p-err"></div>
+
+      <div class="card">
+        <div class="toolbar">
+          <div class="section-title" style="margin-bottom:0;padding-bottom:0;border-bottom:none">Agregar participante</div>
+          <div class="toolbar-actions">
+            <button class="btn-outline" onclick="window.abrirImport()">&#128203; Importar lista</button>
+            <button class="btn-outline" onclick="window.recargarParticipantes(true)">&#8635; Recargar</button>
+          </div>
+        </div>
+        <div class="add-row">
+          <div class="field">
+            <label>Nombre completo</label>
+            <input type="text" id="add-nombre" placeholder="Nombre y apellido" autocomplete="off" autocorrect="off">
+          </div>
+          <div class="field">
+            <label>Email o celular</label>
+            <input type="text" id="add-contacto" placeholder="email@... o +54 9..." autocomplete="off">
+          </div>
+          <button class="btn-primary" style="width:auto;padding:13px 18px" onclick="window.agregarParticipante()">+ Agregar</button>
+        </div>
+
+        <div id="participant-list"><div class="loading-wrap"><div class="spinner"></div>Cargando participantes...</div></div>
+      </div>
+
+      <button class="btn-gold" style="width:100%;margin-bottom:8px" onclick="window.copiarTodosLinks()">&#128279; Copiar todos los links para WhatsApp</button>
+      <button class="btn-outline" style="width:100%;margin-bottom:14px" onclick="window.copiarLinkMedico()">&#129657; Link para el médico</button>
+    </div>
+
+    <!-- TAB ATENCIONES -->
+    <div class="sec" id="sec-atenciones">
+      <div class="offline-notice" id="offline-a">&#9888; Trabajando sin conexi&oacute;n.</div>
+      <div class="stats-row">
+        <div class="stat"><div class="stat-label">Total atendidos</div><div class="stat-value" id="st-total">0</div></div>
+        <div class="stat red"><div class="stat-label">Derivaciones</div><div class="stat-value" id="st-der">0</div></div>
+        <div class="stat gold"><div class="stat-label">Menores</div><div class="stat-value" id="st-men">0</div></div>
+      </div>
+      <div class="card">
+        <div class="toolbar">
+          <div class="section-title" style="margin-bottom:0;padding-bottom:0;border-bottom:none">Atenciones registradas</div>
+          <div class="toolbar-actions">
+            <button class="btn-outline" onclick="window.recargarAtenciones(true)">&#8635; Recargar</button>
+            <button class="btn-gold" onclick="window.exportarCSV()">&#8595; CSV</button>
+          </div>
+        </div>
+        <div id="atenciones-list"><div class="loading-wrap"><div class="spinner"></div>Cargando atenciones...</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const SHEETS_URL  = 'https://script.google.com/macros/s/AKfycbz97bMwspZ_HIxDoL9OseDqQC6kD4g6mnHi5ikXJunAMxiaHlQqS4F13uBiqWtYkACvsQ/exec';
+const BASE_URL    = 'https://fabrilucen5.github.io/viajes-almasalud/';
+const VIAJES_KEY  = 'as_viajes_lista';
+const CACHE_TTL   = 5 * 60 * 1000;
+
+let viajeActual = null;
+let participantesCache = [];
+let importParsed = [];
+
+// ── Storage ──
+function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+function lsJson(k){try{const r=lsGet(k);return r?JSON.parse(r):null;}catch(e){return null;}}
+function getViajes(){return lsJson(VIAJES_KEY)||[];}
+function saveViajes(v){lsSet(VIAJES_KEY,JSON.stringify(v));}
+function genId(){return Math.random().toString(36).slice(2,10);}
+function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}
+function generarLink(viajeId, partId, nombreViaje, nombrePart){
+  return BASE_URL+'viajes-ficha.html?viaje='+encodeURIComponent(viajeId)
+    +'&participante='+encodeURIComponent(partId)
+    +'&vn='+encodeURIComponent(nombreViaje)
+    +'&pn='+encodeURIComponent(nombrePart);
+}
+function generarLinkMedico(viajeId){
+  return BASE_URL+'viajes-medico.html?viaje='+encodeURIComponent(viajeId);
+}
+
+// ── Fetch helpers ──
+async function sheetGet(params){
+  const url = SHEETS_URL+'?'+new URLSearchParams(params).toString();
+  const res = await fetch(url);
+  if(!res.ok) throw new Error('HTTP '+res.status);
+  return res.json();
+}
+function sheetPost(data){
+  fetch(SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}).catch(()=>{});
+}
+
+// ── Cache con TTL ──
+async function cachedFetch(cacheKey, fetcher, force){
+  const ts = parseInt(lsGet(cacheKey+'_ts')||'0');
+  if(!force && Date.now()-ts < CACHE_TTL){
+    const cached = lsJson(cacheKey);
+    if(cached) return {data:cached, offline:false};
+  }
+  try {
+    const data = await fetcher();
+    lsSet(cacheKey, JSON.stringify(data));
+    lsSet(cacheKey+'_ts', String(Date.now()));
+    return {data, offline:false};
+  } catch(e){
+    const cached = lsJson(cacheKey);
+    if(cached) return {data:cached, offline:true};
+    return {data:null, offline:true};
+  }
+}
+
+// ── Modales ──
+window.crearViaje = function(){
+  const org = document.getElementById('in-org').value.trim();
+  const nombre = document.getElementById('in-viaje').value.trim();
+  if(!org||!nombre){document.getElementById('setup-err').style.display='block';return;}
+  document.getElementById('setup-err').style.display='none';
+  const viaje = {id:genId(), nombre, organizadora:org, fechaCreacion:new Date().toISOString().split('T')[0]};
+  const lista = getViajes();
+  lista.push(viaje);
+  saveViajes(lista);
+  sheetPost({tipo:'crear_viaje',...viaje});
+  document.getElementById('modal-setup').classList.remove('show');
+  cargarViaje(viaje.id);
+};
+
+window.abrirSwitch = function(){
+  const lista = getViajes();
+  const el = document.getElementById('switch-lista');
+  el.innerHTML = lista.length
+    ? lista.map(v=>`<div class="viaje-item${viajeActual&&viajeActual.id===v.id?' active':''}" onclick="window.seleccionarViaje('${v.id}')">
+        <div class="viaje-item-name">${esc(v.nombre)}</div>
+        <div class="viaje-item-sub">${esc(v.organizadora)} &middot; ${v.fechaCreacion}</div>
+      </div>`).join('')
+    : '<div class="empty">No hay viajes creados a&uacute;n.</div>';
+  document.getElementById('modal-switch').classList.add('show');
+};
+window.cerrarSwitch  = ()=>document.getElementById('modal-switch').classList.remove('show');
+window.seleccionarViaje = function(id){window.cerrarSwitch();cargarViaje(id);};
+window.nuevoViaje = function(){
+  window.cerrarSwitch();
+  document.getElementById('in-org').value='';
+  document.getElementById('in-viaje').value='';
+  document.getElementById('setup-err').style.display='none';
+  document.getElementById('modal-setup').classList.add('show');
+};
+
+// ── Importar lista ──
+window.abrirImport = function(){
+  document.getElementById('import-texto').value='';
+  document.getElementById('import-preview').style.display='none';
+  document.getElementById('btn-confirm-import').disabled=true;
+  importParsed=[];
+  document.getElementById('modal-import').classList.add('show');
+};
+window.cerrarImport = ()=>document.getElementById('modal-import').classList.remove('show');
+
+window.previsualizarImport = function(){
+  const texto = document.getElementById('import-texto').value;
+  const {resultado, errores} = parsearLista(texto);
+  importParsed = resultado;
+  const prevEl = document.getElementById('import-preview');
+  if(!resultado.length){prevEl.style.display='none';document.getElementById('btn-confirm-import').disabled=true;return;}
+  prevEl.style.display='block';
+  document.getElementById('import-preview-list').innerHTML = resultado.map(p=>
+    `<div class="import-row"><span style="font-weight:600;color:var(--navy)">${esc(p.nombre)}</span><span style="color:var(--muted);font-size:12px">${esc(p.contacto||'')}</span></div>`
+  ).join('')+(errores.length?`<div class="import-err">&#9888; ${errores.length} l&iacute;nea(s) ignorada(s) por estar vac&iacute;a(s).</div>`:'');
+  document.getElementById('import-preview-count').textContent = resultado.length+' participantes encontrados.';
+  document.getElementById('btn-confirm-import').disabled = false;
+};
+
+window.confirmarImport = function(){
+  if(!viajeActual||!importParsed.length) return;
+  const nuevos = importParsed.map(p=>({id:'p'+Date.now()+Math.random().toString(36).slice(2,6), nombre:p.nombre, contacto:p.contacto||''}));
+  const cacheKey = 'as_viaje_'+viajeActual.id+'_participantes';
+  const cached = lsJson(cacheKey)||[];
+  const merged = [...cached, ...nuevos];
+  lsSet(cacheKey, JSON.stringify(merged));
+  lsSet(cacheKey+'_ts', String(Date.now()));
+  participantesCache = merged;
+  sheetPost({tipo:'agregar_participantes', viajeId:viajeActual.id, viaje:viajeActual.nombre, participantes:nuevos});
+  window.cerrarImport();
+  renderParticipantes(merged);
+  mostrarAlerta('alerta-p', nuevos.length+' participantes importados correctamente.', 'ok');
+};
+
+function parsearLista(texto){
+  const lineas = texto.trim().split('\n').filter(l=>l.trim());
+  const resultado=[], errores=[];
+  lineas.forEach((linea,i)=>{
+    const t=linea.trim();
+    if(!t){errores.push(i+1);return;}
+    let partes;
+    if(t.includes('\t')) partes=t.split('\t').map(s=>s.trim()).filter(Boolean);
+    else if(t.includes(';')) partes=t.split(';').map(s=>s.trim()).filter(Boolean);
+    else if(t.includes(',')) partes=t.split(',',2).map(s=>s.trim()).filter(Boolean);
+    else partes=[t];
+    if(partes[0]) resultado.push({nombre:partes[0], contacto:partes[1]||''});
+    else errores.push(i+1);
+  });
+  return {resultado, errores};
+}
+
+// ── Tabs ──
+window.goTab = function(id, btn){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='atenciones') window.recargarAtenciones(false);
+};
+
+// ── Agregar participante individual ──
+window.agregarParticipante = function(){
+  if(!viajeActual){mostrarAlerta('alerta-p-err','No hay viaje activo.','err');return;}
+  const nombre = document.getElementById('add-nombre').value.trim();
+  const contacto = document.getElementById('add-contacto').value.trim();
+  if(!nombre){mostrarAlerta('alerta-p-err','Ingres&aacute; el nombre del participante.','err');return;}
+  const part = {id:'p'+Date.now(), nombre, contacto};
+  const cacheKey = 'as_viaje_'+viajeActual.id+'_participantes';
+  const cached = lsJson(cacheKey)||[];
+  cached.push(part);
+  lsSet(cacheKey, JSON.stringify(cached));
+  lsSet(cacheKey+'_ts', String(Date.now()));
+  participantesCache = cached;
+  sheetPost({tipo:'agregar_participantes', viajeId:viajeActual.id, viaje:viajeActual.nombre, participantes:[part]});
+  document.getElementById('add-nombre').value='';
+  document.getElementById('add-contacto').value='';
+  renderParticipantes(cached);
+  mostrarAlerta('alerta-p', esc(nombre)+' agregado correctamente.', 'ok');
+};
+
+window.eliminarParticipante = function(partId){
+  if(!confirm('¿Eliminar a este participante?'))return;
+  const cacheKey = 'as_viaje_'+viajeActual.id+'_participantes';
+  const lista = (lsJson(cacheKey)||[]).filter(p=>p.id!==partId);
+  lsSet(cacheKey,JSON.stringify(lista));
+  lsSet(cacheKey+'_ts',String(Date.now()));
+  participantesCache=lista;
+  renderParticipantes(lista);
+};
+
+window.copiarLink = function(link, btn){
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(link).then(()=>{btn.textContent='&#10003;';btn.classList.add('done');setTimeout(()=>{btn.textContent='Link';btn.classList.remove('done');},2000);}).catch(()=>prompt('Link:',link));
+  } else { prompt('Link:',link); }
+};
+
+window.copiarLinkMedico = function(){
+  if(!viajeActual){alert('No hay viaje activo.');return;}
+  const link=generarLinkMedico(viajeActual.id);
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(link).then(()=>alert('Link del médico copiado.\n\nEste link abre el panel médico directo en el viaje actual, sin necesidad de haber abierto el admin antes.'));
+  } else { prompt('Link para el médico:',link); }
+};
+
+window.copiarTodosLinks = function(){
+  if(!viajeActual||!participantesCache.length){alert('No hay participantes cargados.');return;}
+  const header='*'+viajeActual.nombre+'*\nFichas médicas — por favor completá el formulario antes del viaje:\n';
+  const links = participantesCache.map(p=>{
+    const link=generarLink(viajeActual.id,p.id,viajeActual.nombre,p.nombre);
+    return p.nombre+' — '+link;
+  }).join('\n');
+  const text=header+'\n'+links;
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(text).then(()=>alert('¡Links copiados! Podés pegarlos en WhatsApp.'));
+  } else { prompt('Copiá los links:',text); }
+};
+
+// ── Cargar participantes desde Sheets ──
+window.recargarParticipantes = async function(force){
+  if(!viajeActual)return;
+  document.getElementById('participant-list').innerHTML='<div class="loading-wrap"><div class="spinner"></div>Cargando desde Sheets...</div>';
+  document.getElementById('offline-p').classList.remove('show');
+  const cacheKey = 'as_viaje_'+viajeActual.id+'_participantes';
+  const {data, offline} = await cachedFetch(cacheKey, async()=>{
+    const r = await sheetGet({tipo:'get_participantes', viajeId:viajeActual.id});
+    return r.participantes||[];
+  }, force);
+  participantesCache = data||[];
+  if(offline) document.getElementById('offline-p').classList.add('show');
+  renderParticipantes(participantesCache);
+};
+
+function renderParticipantes(lista){
+  const el=document.getElementById('participant-list');
+  if(!lista.length){el.innerHTML='<div class="empty">Todav&iacute;a no hay participantes. Agreg&aacute; el primero arriba o import&aacute; una lista.</div>';return;}
+  el.innerHTML=lista.map(p=>{
+    const link=generarLink(viajeActual.id,p.id,viajeActual.nombre,p.nombre);
+    const completada=p.fichaCompletada===true||String(p.fichaCompletada).toUpperCase()==='TRUE';
+    return `<div class="participant">
+      <div class="part-dot ${completada?'ok':'pend'}"></div>
+      <div class="part-info">
+        <div class="part-name">${esc(p.nombre)}</div>
+        ${p.contacto?`<div class="part-contact">${esc(p.contacto)}</div>`:''}
+        <span class="part-link">${link}</span>
+      </div>
+      <span class="part-badge ${completada?'pb-ok':'pb-pend'}">${completada?'&#10003; Ficha completa':'Pendiente'}</span>
+      <div class="part-actions">
+        <button class="btn-sm btn-copy-sm" onclick="window.copiarLink('${link.replace(/'/g,"\\'")}',this)">Link</button>
+        <button class="btn-sm btn-del-sm" onclick="window.eliminarParticipante('${p.id}')">&#10005;</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Cargar atenciones desde Sheets ──
+window.recargarAtenciones = async function(force){
+  if(!viajeActual)return;
+  document.getElementById('atenciones-list').innerHTML='<div class="loading-wrap"><div class="spinner"></div>Cargando desde Sheets...</div>';
+  document.getElementById('offline-a').classList.remove('show');
+  const cacheKey='as_viaje_'+viajeActual.id+'_atenciones';
+  const {data,offline}=await cachedFetch(cacheKey,async()=>{
+    const r=await sheetGet({tipo:'get_atenciones',viajeId:viajeActual.id});
+    return r.atenciones||[];
+  },force);
+  if(offline) document.getElementById('offline-a').classList.add('show');
+  renderAtenciones(data||[]);
+};
+
+function renderAtenciones(at){
+  document.getElementById('st-total').textContent=at.length;
+  document.getElementById('st-der').textContent=at.filter(r=>r.derivacion==='SI').length;
+  document.getElementById('st-men').textContent=at.filter(r=>parseInt(r.edad||99)<18).length;
+  const el=document.getElementById('atenciones-list');
+  if(!at.length){el.innerHTML='<div class="empty">No hay atenciones registradas para este viaje.</div>';return;}
+  el.innerHTML=at.map(r=>`
+    <div class="record">
+      <div class="rec-header">
+        <span class="rec-name">${esc(r.participante||r.nombre||'&mdash;')}</span>
+        <span class="rec-date">${r.fecha||''} ${r.hora||''}</span>
+      </div>
+      <div class="badges">
+        <span class="badge b-motivo">${esc(r.motivo||'&mdash;')}</span>
+        ${r.derivacion==='SI'?'<span class="badge b-der">DERIVADO</span>':''}
+        <span class="badge b-prof">${esc(r.profesional||'&mdash;')}</span>
+      </div>
+    </div>`).join('');
+}
+
+window.exportarCSV = function(){
+  const at=lsJson('as_viaje_'+(viajeActual?.id)+'_atenciones')||[];
+  if(!at.length){alert('No hay atenciones para exportar.');return;}
+  const cols=['N°','Fecha','Hora','Participante','Profesional','Sede','Motivo','Zona','Diagnóstico','Atención','Derivación','Detalle derivación','Observaciones'];
+  let csv='﻿'+cols.map(c=>'"'+c+'"').join(';')+'\n';
+  at.forEach((r,i)=>{
+    csv+=[i+1,r.fecha||'',r.hora||'',r.participante||'',r.profesional||'',r.sede||'',r.motivo||'',r.zona||'',r.diagnostico||'',r.atencion||'',r.derivacion||'',r.derDetalle||'',r.obs||'']
+      .map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')+'\n';
+  });
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;
+  a.download='Atenciones_'+(viajeActual?.nombre||'viaje').replace(/[^a-zA-Z0-9]/g,'_').substring(0,30)+'.csv';
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},300);
+};
+
+function mostrarAlerta(id,msg,tipo){
+  const el=document.getElementById(id);
+  el.className='alert alert-'+(tipo==='ok'?'ok':'err');
+  el.innerHTML=msg;
+  el.style.display='block';
+  setTimeout(()=>{el.style.display='none';},3500);
+}
+
+function cargarViaje(id){
+  const lista=getViajes();
+  viajeActual=lista.find(v=>v.id===id)||null;
+  if(!viajeActual)return;
+  lsSet('as_last_viaje',id);
+  document.getElementById('hdr-nombre').textContent=viajeActual.nombre;
+  window.recargarParticipantes(false);
+}
+
+function init(){
+  const lista=getViajes();
+  if(lista.length){
+    const lastId=lsGet('as_last_viaje');
+    const id=lastId&&lista.find(v=>v.id===lastId)?lastId:lista[lista.length-1].id;
+    document.getElementById('modal-setup').classList.remove('show');
+    cargarViaje(id);
+  }
+}
+init();
+</script>
+</body>
+</html>

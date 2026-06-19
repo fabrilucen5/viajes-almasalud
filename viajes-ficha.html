@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alma Salud - Ficha M&eacute;dica</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#003D6B;--blue:#00508C;--gold:#F5A623;--gold2:#E09612;
+  --red:#DC2626;--red-bg:#FEF2F2;--red-border:#FCA5A5;
+  --green:#16A34A;--green-bg:#F0FDF4;--green-border:#86EFAC;
+  --orange-bg:#FFF8E7;--orange-border:#F5A623;--orange-text:#7a4f00;
+  --border:#dde3f0;--text:#1A1A1A;--muted:#6b7494;--bg:#F7F9FC;
+}
+body{font-family:'Poppins','Inter',sans-serif;color:var(--text);font-size:15px;background:#eef2f7;min-height:100vh}
+.wrap{max-width:680px;margin:0 auto;background:#fff;min-height:100vh;box-shadow:0 0 40px rgba(0,0,0,.08)}
+.header{background:var(--navy);padding:18px 24px;display:flex;align-items:center;gap:16px;border-bottom:3px solid var(--gold)}
+.header img{height:60px;width:auto;object-fit:contain}
+.hdr-sep{width:1.5px;height:44px;background:rgba(255,255,255,.25);flex-shrink:0}
+.hdr-text{flex:1;display:flex;flex-direction:column;gap:3px}
+.hdr-title{font-size:18px;font-weight:700;color:#fff;letter-spacing:.5px}
+.hdr-sub{font-size:12px;color:var(--gold);font-weight:500}
+.viaje-banner{background:#002e52;padding:12px 24px;border-bottom:1px solid rgba(255,255,255,.08)}
+.viaje-banner-label{font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:1px}
+.viaje-banner-name{font-size:15px;font-weight:700;color:#fff;margin-top:3px;line-height:1.4}
+.body{padding:18px;background:var(--bg)}
+.card{background:#fff;border:.5px solid var(--border);border-radius:12px;padding:18px;margin-bottom:14px}
+.section-title{font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid var(--gold);display:inline-block}
+.field{margin-bottom:14px}.field:last-child{margin-bottom:0}
+label{display:block;font-size:11px;font-weight:600;color:var(--navy);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+input,select,textarea{width:100%;font-size:16px;padding:12px 14px;border:1.5px solid var(--border);border-radius:9px;background:#fff;color:var(--text);transition:border-color .2s;font-family:'Poppins','Inter',sans-serif;-webkit-appearance:none;appearance:none}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue)}
+textarea{resize:vertical;min-height:90px}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7494' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+input[readonly]{background:var(--bg);color:var(--muted);border-color:var(--border)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+/* Checkboxes de enfermedades */
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.check-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:.15s;user-select:none}
+.check-item.checked{border-color:var(--navy);background:#e8edf8}
+.check-item input[type=checkbox]{width:18px;height:18px;flex-shrink:0;accent-color:var(--navy);cursor:pointer;margin:0}
+.check-item span{font-size:14px;font-weight:500}
+/* Botones */
+.btn-primary{width:100%;padding:15px;background:var(--navy);color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;transition:.2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;margin-top:4px}
+.btn-primary:active{background:var(--blue)}
+.btn-primary:disabled{background:#aaa;cursor:not-allowed}
+/* Alerts */
+.alert{border-radius:10px;padding:13px 16px;font-size:14px;font-weight:500;margin-bottom:14px;display:none}
+.alert-ok{background:var(--green-bg);border:1.5px solid var(--green-border);color:#14532d}
+.alert-err{background:var(--red-bg);border:1.5px solid var(--red-border);color:#7f1d1d}
+.alert-info{background:#e8edf8;border:1.5px solid #b5d4f4;color:#003D6B}
+/* Menor */
+.menor-note{background:var(--orange-bg);border:1.5px solid var(--orange-border);border-radius:9px;padding:12px 16px;font-size:13px;color:var(--orange-text);margin-bottom:14px;line-height:1.5;display:flex;align-items:flex-start;gap:10px}
+.tutor-section{display:none}
+.tutor-section.show{display:block}
+/* Estados especiales */
+.confirmado-card{text-align:center;padding:36px 20px}
+.confirmado-icon{font-size:56px;margin-bottom:16px}
+.confirmado-title{font-size:22px;font-weight:700;color:var(--navy);margin-bottom:8px}
+.confirmado-sub{font-size:14px;color:var(--muted);line-height:1.7}
+.error-card{text-align:center;padding:36px 20px}
+.error-icon{font-size:52px;margin-bottom:16px}
+.error-title{font-size:20px;font-weight:700;color:var(--red);margin-bottom:8px}
+.error-sub{font-size:14px;color:var(--muted);line-height:1.7}
+.loading-wrap{display:flex;align-items:center;gap:12px;justify-content:center;padding:48px 20px;color:var(--muted);font-size:15px}
+.spinner{width:22px;height:22px;border:2.5px solid var(--border);border-top-color:var(--navy);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:480px){
+  .header{padding:12px 16px;gap:12px}
+  .header img{height:48px}
+  .hdr-sep{height:36px}
+  .hdr-title{font-size:16px}
+  .viaje-banner{padding:10px 16px}
+  .body{padding:14px}
+  .g2,.g3{grid-template-columns:1fr}
+  .checks{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <img src="https://raw.githubusercontent.com/fabrilucen5/imagenesalmasalud/main/Alma%20Salud%20-%20Logo%202.png"
+      alt="Alma Salud"
+      onerror="this.onerror=null;this.src='https://fabrilucen5.github.io/imagenesalmasalud/Alma%20Salud%20-%20Logo%202.png'">
+    <div class="hdr-sep"></div>
+    <div class="hdr-text">
+      <span class="hdr-title">ALMA SALUD</span>
+      <span class="hdr-sub">Ficha m&eacute;dica &mdash; Viaje de egresados</span>
+    </div>
+  </div>
+  <div class="viaje-banner">
+    <div class="viaje-banner-label">Viaje</div>
+    <div class="viaje-banner-name" id="banner-viaje">&nbsp;</div>
+  </div>
+  <div class="body" id="app-body">
+    <div class="loading-wrap"><div class="spinner"></div>Cargando tu ficha...</div>
+  </div>
+</div>
+
+<script>
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbz97bMwspZ_HIxDoL9OseDqQC6kD4g6mnHi5ikXJunAMxiaHlQqS4F13uBiqWtYkACvsQ/exec';
+
+function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+function lsJson(k){try{const r=lsGet(k);return r?JSON.parse(r):null;}catch(e){return null;}}
+function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}
+
+const params   = new URLSearchParams(window.location.search);
+const VIAJE_ID = params.get('viaje')||'';
+const PART_ID  = params.get('participante')||'';
+const VN       = params.get('vn')||'';   // nombre del viaje (en URL)
+const PN       = params.get('pn')||'';   // nombre del participante (en URL)
+
+// ── Funciones del formulario ──────────────────────────────────
+window.checkEdad = function(){
+  const edad = parseInt(document.getElementById('f-edad').value||'99');
+  document.getElementById('tutor-section').classList.toggle('show', edad>0 && edad<18);
+};
+
+window.toggleCheck = function(el){
+  const cb = el.querySelector('input[type=checkbox]');
+  cb.checked = !cb.checked;
+  el.classList.toggle('checked', cb.checked);
+};
+
+window.enviarFicha = async function(){
+  const nombre  = document.getElementById('f-nombre').value.trim();
+  const edad    = document.getElementById('f-edad').value.trim();
+  const dni     = document.getElementById('f-dni').value.trim();
+  const sexo    = document.getElementById('f-sexo').value;
+  const grupo   = document.getElementById('f-grupo').value;
+  const contNom = document.getElementById('f-cont-nombre').value.trim();
+  const contTel = document.getElementById('f-cont-tel').value.trim();
+  const obra    = document.getElementById('f-obra-social').value.trim();
+  const afil    = document.getElementById('f-afiliado').value.trim();
+  const med     = document.getElementById('f-medicacion').value.trim();
+  const alerg   = document.getElementById('f-alergias').value.trim();
+  const cir     = document.getElementById('f-cirugias').value.trim();
+  const obs     = document.getElementById('f-obs').value.trim();
+  const edadNum = parseInt(edad||'99');
+  const esMenor = edadNum>0 && edadNum<18;
+  const tutorNom= esMenor?document.getElementById('f-tutor-nom').value.trim():'';
+  const tutorTel= esMenor?document.getElementById('f-tutor-tel').value.trim():'';
+
+  const enfs=[];
+  document.querySelectorAll('.enfermedad-cb:checked').forEach(cb=>enfs.push(cb.value));
+
+  if(!nombre||!edad||!contNom||!contTel){
+    mostrarAlerta('alert-err','Por favor complet&aacute; los campos obligatorios marcados con *.');
+    return;
+  }
+  if(esMenor&&(!tutorNom||!tutorTel)){
+    mostrarAlerta('alert-err','Como sos menor de edad, complet&aacute; los datos de tu padre, madre o tutor.');
+    return;
+  }
+
+  const btn=document.getElementById('btn-enviar');
+  btn.disabled=true;btn.textContent='Enviando...';
+  mostrarAlerta('alert-info','Enviando tu ficha a Alma Salud...');
+
+  const ficha={
+    nombre, edad, dni, sexo, grupoSanguineo:grupo,
+    enfermedadesCronicas:enfs.join(', '),
+    medicacion:med||'Ninguna', alergias:alerg||'Ninguna', cirugias:cir||'Ninguna',
+    contactoEmergenciaNombre:contNom, contactoEmergenciaTel:contTel,
+    obraSocial:obra, numAfiliado:afil,
+    tutorNombre:tutorNom, tutorTel, obs,
+    fechaEnvio:new Date().toISOString()
+  };
+
+  fetch(SHEETS_URL,{
+    method:'POST', mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({tipo:'ficha_medica', viajeId:VIAJE_ID, participanteId:PART_ID, ...ficha})
+  }).catch(()=>{});
+
+  // Guardar en localStorage como respaldo y flag de enviado
+  const cacheKey='as_viaje_'+VIAJE_ID+'_participantes';
+  const lista=lsJson(cacheKey)||[];
+  const idx=lista.findIndex(p=>p.id===PART_ID);
+  if(idx>=0){
+    lista[idx]={...lista[idx], fichaCompletada:true, fechaFicha:ficha.fechaEnvio, fichaData:ficha};
+    lsSet(cacheKey,JSON.stringify(lista));
+  }
+  lsSet('as_ficha_enviada_'+VIAJE_ID+'_'+PART_ID, ficha.fechaEnvio);
+
+  mostrarEnviado();
+};
+
+// ── Estados de pantalla ───────────────────────────────────────
+function mostrarAlerta(id,msg){
+  ['alert-ok','alert-err','alert-info'].forEach(i=>{const e=document.getElementById(i);if(e)e.style.display='none';});
+  const el=document.getElementById(id);
+  if(el){el.innerHTML=msg;el.style.display='block';}
+}
+
+function mostrarEnviado(){
+  document.getElementById('app-body').innerHTML=`
+    <div class="card confirmado-card">
+      <div class="confirmado-icon">&#9989;</div>
+      <div class="confirmado-title">&iexcl;Ficha enviada!</div>
+      <div class="confirmado-sub">
+        Tu informaci&oacute;n m&eacute;dica fue registrada correctamente.<br>
+        El equipo m&eacute;dico de <strong>Alma Salud</strong> la tendr&aacute; disponible durante todo el viaje.<br><br>
+        &#128522; <strong>&iexcl;Buen viaje!</strong>
+      </div>
+    </div>`;
+}
+
+function mostrarError(msg){
+  document.getElementById('app-body').innerHTML=`
+    <div class="card error-card">
+      <div class="error-icon">&#9888;&#65039;</div>
+      <div class="error-title">Link inv&aacute;lido</div>
+      <div class="error-sub">${msg}</div>
+    </div>`;
+}
+
+function mostrarYaEnviada(nombre, fecha){
+  const fechaStr = fecha ? new Date(fecha).toLocaleDateString('es-AR',{day:'2-digit',month:'long',year:'numeric'}) : '';
+  document.getElementById('app-body').innerHTML=`
+    <div class="card confirmado-card">
+      <div class="confirmado-icon">&#9989;</div>
+      <div class="confirmado-title">Ficha ya completada</div>
+      <div class="confirmado-sub">
+        <strong>${esc(nombre)}</strong>, tu ficha m&eacute;dica ya fue enviada${fechaStr?' el '+fechaStr:''}.<br><br>
+        Si necesit&aacute;s corregir algo, contact&aacute; a la organizadora del viaje.
+      </div>
+    </div>`;
+}
+
+function renderForm(nombrePart, nombreViaje){
+  document.getElementById('banner-viaje').textContent = nombreViaje;
+  document.getElementById('app-body').innerHTML=`
+    <div class="alert alert-ok"  id="alert-ok"></div>
+    <div class="alert alert-err" id="alert-err"></div>
+    <div class="alert alert-info" id="alert-info"></div>
+
+    <div class="card">
+      <div class="section-title">&#128100; Datos personales</div>
+      <div class="field">
+        <label>Nombre completo <span style="color:#DC2626">*</span></label>
+        <input type="text" id="f-nombre" value="${esc(nombrePart)}" readonly>
+      </div>
+      <div class="g3">
+        <div class="field">
+          <label>Edad <span style="color:#DC2626">*</span></label>
+          <input type="number" id="f-edad" placeholder="A&ntilde;os" min="1" max="99" oninput="window.checkEdad()" inputmode="numeric">
+        </div>
+        <div class="field">
+          <label>DNI</label>
+          <input type="text" id="f-dni" placeholder="N&uacute;mero" inputmode="numeric" autocomplete="off">
+        </div>
+        <div class="field">
+          <label>Sexo</label>
+          <select id="f-sexo">
+            <option value="">Prefiero no decir</option>
+            <option>Masculino</option>
+            <option>Femenino</option>
+            <option>Otro</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">&#128138; Antecedentes m&eacute;dicos</div>
+      <div class="field">
+        <label>Enfermedades cr&oacute;nicas <small style="font-size:10px;font-weight:400;text-transform:none">(marc&aacute; todas las que correspondan)</small></label>
+        <div class="checks">
+          <div class="check-item" onclick="window.toggleCheck(this)"><input type="checkbox" class="enfermedad-cb" value="Diabetes"><span>Diabetes</span></div>
+          <div class="check-item" onclick="window.toggleCheck(this)"><input type="checkbox" class="enfermedad-cb" value="Hipertensi&oacute;n"><span>Hipertensi&oacute;n</span></div>
+          <div class="check-item" onclick="window.toggleCheck(this)"><input type="checkbox" class="enfermedad-cb" value="Asma"><span>Asma</span></div>
+          <div class="check-item" onclick="window.toggleCheck(this)"><input type="checkbox" class="enfermedad-cb" value="Epilepsia"><span>Epilepsia</span></div>
+          <div class="check-item" onclick="window.toggleCheck(this)"><input type="checkbox" class="enfermedad-cb" value="Cardiopat&iacute;a"><span>Cardiopat&iacute;a</span></div>
+          <div class="check-item" onclick="window.toggleCheck(this)"><input type="checkbox" class="enfermedad-cb" value="Otra"><span>Otra</span></div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Medicaci&oacute;n habitual</label>
+        <textarea id="f-medicacion" placeholder="Ej: Metformina 850mg, Salbutamol inhalador... Si no tom&aacute;s ninguna, escrib&iacute; &laquo;Ninguna&raquo;."></textarea>
+      </div>
+      <div class="field">
+        <label>Alergias conocidas</label>
+        <textarea id="f-alergias" placeholder="Ej: Penicilina, ibuprofeno, mariscos... Si no ten&eacute;s ninguna, escrib&iacute; &laquo;Ninguna&raquo;."></textarea>
+      </div>
+      <div class="field">
+        <label>Cirug&iacute;as previas relevantes</label>
+        <input type="text" id="f-cirugias" placeholder="Ej: Rodilla 2023, apendicitis 2021. O &laquo;Ninguna&raquo;." autocomplete="off">
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">&#128657; Datos de emergencia</div>
+      <div class="field">
+        <label>Grupo sangu&iacute;neo</label>
+        <select id="f-grupo">
+          <option value="">No s&eacute; / No recuerdo</option>
+          <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+          <option>AB+</option><option>AB-</option><option>0+</option><option>0-</option>
+        </select>
+      </div>
+      <div class="g2">
+        <div class="field">
+          <label>Contacto de emergencia &mdash; Nombre <span style="color:#DC2626">*</span></label>
+          <input type="text" id="f-cont-nombre" placeholder="Nombre del familiar" autocomplete="off" autocorrect="off">
+        </div>
+        <div class="field">
+          <label>Contacto de emergencia &mdash; Tel&eacute;fono <span style="color:#DC2626">*</span></label>
+          <input type="tel" id="f-cont-tel" placeholder="+54 9 ..." inputmode="tel">
+        </div>
+      </div>
+      <div class="g2">
+        <div class="field">
+          <label>Obra social / Prepaga</label>
+          <input type="text" id="f-obra-social" placeholder="Ej: OSDE, Swiss Medical, IOMA..." autocomplete="off">
+        </div>
+        <div class="field">
+          <label>N&uacute;mero de afiliado</label>
+          <input type="text" id="f-afiliado" placeholder="N&uacute;m. de credencial" autocomplete="off">
+        </div>
+      </div>
+    </div>
+
+    <div class="tutor-section" id="tutor-section">
+      <div class="card">
+        <div class="section-title">&#128106; Datos del padre / madre / tutor</div>
+        <div class="menor-note">&#9888; Como sos menor de edad, necesitamos los datos de tu padre, madre o tutor para casos de emergencia.</div>
+        <div class="g2">
+          <div class="field">
+            <label>Nombre completo <span style="color:#DC2626">*</span></label>
+            <input type="text" id="f-tutor-nom" placeholder="Nombre y apellido" autocomplete="off" autocorrect="off">
+          </div>
+          <div class="field">
+            <label>Tel&eacute;fono / WhatsApp <span style="color:#DC2626">*</span></label>
+            <input type="tel" id="f-tutor-tel" placeholder="+54 9 ..." inputmode="tel">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">&#128221; Observaciones adicionales</div>
+      <div class="field">
+        <textarea id="f-obs" style="min-height:100px" placeholder="¿Hay algo m&aacute;s que el equipo m&eacute;dico deba saber sobre vos? Cualquier informaci&oacute;n es bienvenida."></textarea>
+      </div>
+    </div>
+
+    <button class="btn-primary" id="btn-enviar" onclick="window.enviarFicha()">&#128190; Enviar mi ficha m&eacute;dica</button>
+    <p style="font-size:12px;color:var(--muted);text-align:center;margin-top:12px;padding:0 8px;line-height:1.6">
+      &#128274; Tu informaci&oacute;n es confidencial y ser&aacute; accedida &uacute;nicamente por el equipo m&eacute;dico de Alma Salud durante el viaje.
+    </p>`;
+}
+
+// ── Init ──────────────────────────────────────────────────────
+async function init(){
+  if(!VIAJE_ID||!PART_ID){
+    mostrarError('Este link no es v&aacute;lido. Pedile a la organizadora del viaje que te reenv&iacute;e tu link personal.');
+    return;
+  }
+
+  // Verificar si ya fue enviada (localStorage primero — respuesta instantánea)
+  const yaEnviada = lsGet('as_ficha_enviada_'+VIAJE_ID+'_'+PART_ID);
+  if(yaEnviada){
+    const nombreViaje = VN || lsJson('as_viaje_'+VIAJE_ID+'_info')?.nombre || 'Viaje de egresados';
+    document.getElementById('banner-viaje').textContent = nombreViaje;
+    mostrarYaEnviada(PN||'', yaEnviada);
+    return;
+  }
+
+  // Caso ideal: vn y pn vienen en la URL → mostrar form de inmediato sin consultar Sheets
+  if(VN && PN){
+    document.getElementById('banner-viaje').textContent = VN;
+    renderForm(PN, VN);
+    // Verificar en Sheets en background por si ya se envió desde otro dispositivo
+    try {
+      const res = await fetch(SHEETS_URL+'?tipo=get_participante&viajeId='+encodeURIComponent(VIAJE_ID)+'&participanteId='+encodeURIComponent(PART_ID));
+      const data = await res.json();
+      if(data.ok && data.participante?.fichaCompletada){
+        mostrarYaEnviada(PN, data.participante.fechaFicha);
+        lsSet('as_ficha_enviada_'+VIAJE_ID+'_'+PART_ID, data.participante.fechaFicha||new Date().toISOString());
+      }
+    } catch(e){
+      // Sin conexión o SHEETS_URL sin configurar → seguimos con el form ya renderizado
+    }
+    return;
+  }
+
+  // Fallback: buscar participante en Sheets
+  try {
+    const res = await fetch(SHEETS_URL+'?tipo=get_participante&viajeId='+encodeURIComponent(VIAJE_ID)+'&participanteId='+encodeURIComponent(PART_ID));
+    const data = await res.json();
+    if(!data.ok || !data.participante){
+      mostrarError('Participante no encontrado. Verific&aacute; que el link sea correcto o contact&aacute; a la organizadora.');
+      return;
+    }
+    const part = data.participante;
+    const nombreViaje = VN || 'Viaje de egresados';
+    document.getElementById('banner-viaje').textContent = nombreViaje;
+    if(part.fichaCompletada){
+      lsSet('as_ficha_enviada_'+VIAJE_ID+'_'+PART_ID, part.fechaFicha||new Date().toISOString());
+      mostrarYaEnviada(part.nombre, part.fechaFicha);
+    } else {
+      renderForm(part.nombre, nombreViaje);
+    }
+  } catch(e){
+    // Sheets no disponible o URL no configurada
+    if(PN){
+      const nombreViaje = VN||'Viaje de egresados';
+      document.getElementById('banner-viaje').textContent = nombreViaje;
+      renderForm(PN, nombreViaje);
+    } else {
+      mostrarError('No se pudo verificar el participante y el link no incluye los datos necesarios. Pedile a la organizadora que te reenv&iacute;e tu link actualizado.');
+    }
+  }
+}
+
+init();
+</script>
+</body>
+</html>
