@@ -22,6 +22,8 @@ body{font-family:'Poppins','Inter',sans-serif;color:var(--text);font-size:15px;b
 .hdr-text{flex:1;display:flex;flex-direction:column;gap:3px}
 .hdr-title{font-size:19px;font-weight:700;color:#fff;letter-spacing:.5px}
 .hdr-sub{font-size:12px;color:var(--gold);font-weight:500}
+.hdr-medico{font-size:11px;color:rgba(255,255,255,.75);display:none;cursor:pointer}
+.hdr-medico.show{display:block}
 .hdr-viaje{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:8px 14px;text-align:right;cursor:pointer;flex-shrink:0;transition:.2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .hdr-viaje:hover{background:rgba(255,255,255,.18)}
 .hdr-viaje-label{font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:1px}
@@ -81,6 +83,13 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .toolbar-actions{display:flex;gap:8px;flex-wrap:wrap}
 .filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .filters input,.filters select{width:auto;font-size:14px;padding:9px 13px;border-radius:8px;min-width:140px}
+/* Pills */
+.pills-row{display:none;gap:6px;flex-wrap:wrap;margin:0 0 12px}
+.pills-row.show{display:flex}
+.pill-btn{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:#fff;color:var(--muted);transition:.15s;font-family:'Poppins',sans-serif;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.pill-btn.active{border-color:var(--navy);background:var(--navy);color:#fff}
+.pill-btn:hover:not(.active){border-color:var(--blue);color:var(--blue)}
+.pill-count{font-size:11px;color:var(--muted);align-self:center;padding-left:2px}
 /* Fichas */
 .ficha-item{border-bottom:.5px solid var(--border);padding:13px 0}
 .ficha-item:last-child{border-bottom:none}
@@ -131,6 +140,9 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .viaje-item.active{border-color:var(--navy);background:#e8edf8}
 .viaje-item-name{font-weight:600;color:var(--navy);font-size:14px}
 .viaje-item-sub{font-size:12px;color:var(--muted);margin-top:2px}
+/* Refresh timestamp */
+.refresh-ts{font-size:11px;color:var(--muted);display:none}
+.refresh-ts.show{display:inline}
 @media(max-width:480px){
   .header{padding:13px 14px;gap:12px;flex-wrap:wrap}
   .header img{height:50px}
@@ -149,6 +161,28 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 </style>
 </head>
 <body>
+
+<!-- MODAL IDENTIFICACIÓN MÉDICO -->
+<div class="overlay" id="modal-medico">
+  <div class="modal">
+    <h3>&#128100; Identificaci&oacute;n m&eacute;dica</h3>
+    <p>Ingres&aacute; tu nombre y matr&iacute;cula. Se guardar&aacute;n en este dispositivo para no pedirlos de nuevo.</p>
+    <div class="field">
+      <label>Nombre completo <span style="color:#DC2626">*</span></label>
+      <input type="text" id="med-nombre" placeholder="Dr. Juan Garc&iacute;a..." autocomplete="off"
+        onkeydown="if(event.key==='Enter')window.confirmarMedico()">
+    </div>
+    <div class="field">
+      <label>Matr&iacute;cula</label>
+      <input type="text" id="med-matricula" placeholder="MP 12345 / MN 67890" autocomplete="off"
+        onkeydown="if(event.key==='Enter')window.confirmarMedico()">
+    </div>
+    <div id="modal-medico-err" style="display:none;color:#DC2626;font-size:13px;margin-bottom:10px">&#9888; Ingres&aacute; tu nombre para continuar.</div>
+    <div class="modal-btns">
+      <button class="btn-gold" onclick="window.confirmarMedico()">Continuar &#8594;</button>
+    </div>
+  </div>
+</div>
 
 <!-- MODAL SELECTOR DE VIAJE -->
 <div class="overlay show" id="modal-viaje">
@@ -175,6 +209,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     <div class="hdr-text">
       <span class="hdr-title">ALMA SALUD</span>
       <span class="hdr-sub">Panel m&eacute;dico &mdash; Viajes de egresados</span>
+      <span class="hdr-medico" id="hdr-medico" onclick="window.cambiarMedico()" title="Cambiar m&eacute;dico"></span>
     </div>
     <div class="hdr-viaje" onclick="window.abrirSelectorViaje()">
       <div class="hdr-viaje-label">Viaje activo</div>
@@ -196,11 +231,21 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
       <div class="offline-notice" id="offline-f">&#9888; Trabajando sin conexi&oacute;n. Las fichas pueden no estar actualizadas.</div>
       <div class="card">
         <div class="toolbar">
-          <div class="section-title" style="margin-bottom:0;padding-bottom:0;border-bottom:none">Fichas m&eacute;dicas</div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <div class="section-title" style="margin-bottom:0;padding-bottom:0;border-bottom:none">Fichas m&eacute;dicas</div>
+            <span class="refresh-ts" id="fichas-ts"></span>
+          </div>
           <div class="toolbar-actions">
             <input type="text" id="buscar-part" placeholder="&#128269; Buscar..." oninput="window.filtrarFichas()" style="width:170px;font-size:14px;padding:9px 13px;border-radius:8px">
             <button class="btn-outline" onclick="window.recargarFichas(true)">&#8635;</button>
           </div>
+        </div>
+        <div class="pills-row" id="pills-fichas">
+          <button class="pill-btn active" onclick="window.setFiltro('todas',this)">Todas</button>
+          <button class="pill-btn" onclick="window.setFiltro('sin_ficha',this)">Sin ficha</button>
+          <button class="pill-btn" onclick="window.setFiltro('alertas',this)">Con alertas</button>
+          <button class="pill-btn" onclick="window.setFiltro('menores',this)">Menores</button>
+          <span class="pill-count" id="pill-count"></span>
         </div>
         <div id="fichas-lista"><div class="loading-wrap"><div class="spinner"></div>Cargando fichas...</div></div>
       </div>
@@ -317,6 +362,9 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
               <option value="si">Con derivaci&oacute;n</option>
               <option value="no">Sin derivaci&oacute;n</option>
             </select>
+            <select id="h-prof" onchange="window.renderHistorial()" style="min-width:160px">
+              <option value="">Todos los profesionales</option>
+            </select>
           </div>
           <div class="toolbar-actions">
             <button class="btn-outline" onclick="window.recargarHistorial(true)">&#8635;</button>
@@ -342,10 +390,15 @@ const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbz97bMwspZ_HIxDoL9Os
 const CACHE_TTL  = 5 * 60 * 1000;
 const VIAJES_KEY = 'as_viajes_lista';
 
-let viajeActual   = null;
-let selectedId    = null;
-let participantes = [];
-let atenciones    = [];
+let viajeActual    = null;
+let selectedId     = null;
+let participantes  = [];
+let atenciones     = [];
+let medicoNombre   = '';
+let medicoMatricula= '';
+let filtroFichas   = 'todas';
+let autoRefreshTimer = null;
+let pendingViajeId = null;
 
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
@@ -367,6 +420,57 @@ async function cachedFetch(cacheKey, fetcher, force){
   if(!force && Date.now()-ts<CACHE_TTL){const cached=lsJson(cacheKey);if(cached)return{data:cached,offline:false};}
   try{const data=await fetcher();lsSet(cacheKey,JSON.stringify(data));lsSet(cacheKey+'_ts',String(Date.now()));return{data,offline:false};}
   catch(e){const cached=lsJson(cacheKey);if(cached)return{data:cached,offline:true};return{data:null,offline:true};}
+}
+
+// ── Médico identity ───────────────────────────────────────────
+window.confirmarMedico = function(){
+  const nombre=(document.getElementById('med-nombre').value||'').trim();
+  if(!nombre){document.getElementById('modal-medico-err').style.display='block';return;}
+  const matricula=(document.getElementById('med-matricula').value||'').trim();
+  lsSet('as_medico_nombre',nombre);
+  lsSet('as_medico_matricula',matricula);
+  medicoNombre=nombre;
+  medicoMatricula=matricula;
+  document.getElementById('modal-medico-err').style.display='none';
+  document.getElementById('modal-medico').classList.remove('show');
+  actualizarHeaderMedico();
+  if(pendingViajeId){
+    const id=pendingViajeId;
+    pendingViajeId=null;
+    cargarViajeById(id);
+    return;
+  }
+  const lista=lsJson(VIAJES_KEY)||[];
+  renderModalViajes();
+  const lastId=lsGet('as_last_viaje_medico');
+  if(lastId&&lista.find(v=>v.id===lastId)){
+    selectedId=lastId;
+    cargarViaje(lastId);
+  } else if(lista.length===1){
+    selectedId=lista[0].id;
+    cargarViaje(lista[0].id);
+  } else {
+    document.getElementById('modal-viaje').classList.add('show');
+  }
+};
+
+window.cambiarMedico = function(){
+  document.getElementById('med-nombre').value=medicoNombre;
+  document.getElementById('med-matricula').value=medicoMatricula;
+  document.getElementById('modal-medico-err').style.display='none';
+  document.getElementById('modal-medico').classList.add('show');
+};
+
+function actualizarHeaderMedico(){
+  const el=document.getElementById('hdr-medico');
+  if(el&&medicoNombre){
+    el.innerHTML='&#128100; '+esc(medicoNombre)+(medicoMatricula?' &middot; '+esc(medicoMatricula):'')+' <span style="color:var(--gold);font-size:10px">(cambiar)</span>';
+    el.classList.add('show');
+  }
+  const profEl=document.getElementById('r-profesional');
+  if(profEl&&!profEl.value){
+    profEl.value=medicoNombre+(medicoMatricula?' (Mat. '+medicoMatricula+')':'');
+  }
 }
 
 // ── Modal de viaje ────────────────────────────────────────────
@@ -412,6 +516,25 @@ window.goTab = function(id, btn){
   if(id==='historial') window.recargarHistorial(false);
 };
 
+// ── Auto-refresh ──────────────────────────────────────────────
+function iniciarAutoRefresh(){
+  if(autoRefreshTimer) clearInterval(autoRefreshTimer);
+  autoRefreshTimer=setInterval(()=>{
+    if(!document.hidden&&viajeActual){
+      window.recargarFichas(true);
+      window.recargarHistorial(true);
+    }
+  }, CACHE_TTL);
+}
+
+function actualizarTimestamp(){
+  const el=document.getElementById('fichas-ts');
+  if(!el) return;
+  const n=new Date();
+  el.textContent='Act. '+String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+  el.classList.add('show');
+}
+
 // ── Fichas ────────────────────────────────────────────────────
 window.recargarFichas = async function(force){
   if(!viajeActual) return;
@@ -424,13 +547,44 @@ window.recargarFichas = async function(force){
   },force);
   participantes=data||[];
   if(offline) document.getElementById('offline-f').classList.add('show');
+  document.getElementById('pills-fichas').classList.add('show');
+  actualizarTimestamp();
   window.filtrarFichas();
   cargarSelectParticipantes();
 };
 
+window.setFiltro = function(tipo, btn){
+  filtroFichas=tipo;
+  document.querySelectorAll('#pills-fichas .pill-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  window.filtrarFichas();
+};
+
 window.filtrarFichas = function(){
   const q=(document.getElementById('buscar-part').value||'').toLowerCase();
-  const lista=participantes.filter(p=>!q||p.nombre.toLowerCase().includes(q));
+  let lista=participantes.filter(p=>!q||p.nombre.toLowerCase().includes(q));
+
+  if(filtroFichas==='sin_ficha'){
+    lista=lista.filter(p=>!(p.fichaCompletada===true||String(p.fichaCompletada).toUpperCase()==='TRUE'));
+  } else if(filtroFichas==='alertas'){
+    lista=lista.filter(p=>{
+      const completada=p.fichaCompletada===true||String(p.fichaCompletada).toUpperCase()==='TRUE';
+      if(!completada) return false;
+      const fd=p.fichaData||p;
+      return (fd.alergias&&String(fd.alergias).toLowerCase()!='ninguna')
+        ||(fd.medicacion&&String(fd.medicacion).toLowerCase()!='ninguna')
+        ||(fd.enfermedadesCronicas&&String(fd.enfermedadesCronicas).trim());
+    });
+  } else if(filtroFichas==='menores'){
+    lista=lista.filter(p=>{
+      const fd=p.fichaData||p;
+      return fd.edad&&parseInt(fd.edad)<18;
+    });
+  }
+
+  const countEl=document.getElementById('pill-count');
+  if(countEl) countEl.textContent=lista.length+' de '+participantes.length;
+
   renderFichas(lista);
 };
 
@@ -441,7 +595,7 @@ window.toggleFicha = function(i){
 
 function renderFichas(lista){
   const el=document.getElementById('fichas-lista');
-  if(!lista.length){el.innerHTML='<div class="empty">'+(participantes.length?'No hay resultados para esa b&uacute;squeda.':'No hay participantes en este viaje.')+'</div>';return;}
+  if(!lista.length){el.innerHTML='<div class="empty">'+(participantes.length?'No hay resultados para ese filtro.':'No hay participantes en este viaje.')+'</div>';return;}
   const ats=atenciones;
   el.innerHTML=lista.map((p,i)=>{
     const fd=p.fichaData||(p.fichaCompletada===true||String(p.fichaCompletada).toUpperCase()==='TRUE'?p:{});
@@ -450,7 +604,6 @@ function renderFichas(lista){
     const tieneMed=fd.medicacion&&String(fd.medicacion).toLowerCase()!='ninguna';
     const tieneEnf=fd.enfermedadesCronicas&&String(fd.enfermedadesCronicas).trim();
     const derPrev=ats.filter(a=>a.participanteId===p.id&&a.derivacion==='SI').length;
-    // Pre-compute complex expressions to avoid deeply nested template literals
     const edadStr=fd.edad?(fd.edad+' a&ntilde;os'):'&mdash;';
     const metaStr=completada&&fd.edad?(fd.edad+' a&ntilde;os'+(fd.sexo?' &middot; '+esc(fd.sexo):'')):'';
     const emerStr=fd.contactoEmergenciaNombre?(esc(fd.contactoEmergenciaNombre)+' &mdash; '+esc(fd.contactoEmergenciaTel)):'&mdash;';
@@ -562,7 +715,6 @@ window.guardarAtencion = async function(){
     fechaRegistro:new Date().toISOString()
   };
 
-  // Guardar en localStorage
   const cacheKey='as_viaje_'+viajeActual.id+'_atenciones';
   const cached=lsJson(cacheKey)||[];
   cached.unshift(r);
@@ -595,7 +747,7 @@ function cargarSelectParticipantes(){
 }
 
 function resetForm(){
-  ['r-sede','r-profesional','r-motivo','r-zona','r-diagnostico','r-atencion','r-obs','r-der-detalle','r-otro-nombre']
+  ['r-sede','r-motivo','r-zona','r-diagnostico','r-atencion','r-obs','r-der-detalle','r-otro-nombre']
     .forEach(id=>{const el=document.getElementById(id);if(el){el.value='';el.style.borderColor='';}});
   document.getElementById('r-participante').value='';
   document.getElementById('r-derivacion').checked=false;
@@ -604,6 +756,10 @@ function resetForm(){
   document.getElementById('hint-ficha').classList.remove('show');
   document.getElementById('otro-wrap').style.display='none';
   document.getElementById('r-fecha').value=new Date().toISOString().split('T')[0];
+  const profEl=document.getElementById('r-profesional');
+  if(profEl&&medicoNombre){
+    profEl.value=medicoNombre+(medicoMatricula?' (Mat. '+medicoMatricula+')':'');
+  }
 }
 
 // ── Historial ─────────────────────────────────────────────────
@@ -616,7 +772,6 @@ window.recargarHistorial = async function(force){
     const r=await sheetGet({tipo:'get_atenciones',viajeId:viajeActual.id});
     return r.atenciones||[];
   },force);
-  // Combinar con localStorage (posibles registros offline no subidos)
   const local=lsJson(cacheKey)||[];
   const sheetsData=data||[];
   const sheetsIds=new Set(sheetsData.map(r=>String(r.id)));
@@ -629,13 +784,31 @@ window.recargarHistorial = async function(force){
 
 window.renderHistorial = function(){
   const q=(document.getElementById('h-nombre').value||'').toLowerCase();
-  const fd=document.getElementById('h-der').value;
+  const derFilt=document.getElementById('h-der').value;
+
+  // Sync profesional select options then capture value
+  const profSel=document.getElementById('h-prof');
+  const profFilt=profSel?profSel.value:'';
+  if(profSel){
+    const profs=[...new Set(atenciones.map(r=>r.profesional).filter(Boolean))].sort();
+    const current=profSel.value;
+    profSel.innerHTML='<option value="">Todos los profesionales</option>';
+    profs.forEach(p=>{
+      const o=document.createElement('option');
+      o.value=p; o.textContent=p;
+      profSel.appendChild(o);
+    });
+    if(profs.includes(current)) profSel.value=current;
+  }
+
   const lista=atenciones.filter(r=>{
-    if(q&&!(r.participante||'').toLowerCase().includes(q))return false;
-    if(fd==='si'&&r.derivacion!=='SI')return false;
-    if(fd==='no'&&r.derivacion!=='NO')return false;
+    if(q&&!(r.participante||'').toLowerCase().includes(q)) return false;
+    if(derFilt==='si'&&r.derivacion!=='SI') return false;
+    if(derFilt==='no'&&r.derivacion!=='NO') return false;
+    if(profFilt&&r.profesional!==profFilt) return false;
     return true;
   });
+
   document.getElementById('h-total').textContent=atenciones.length;
   document.getElementById('h-der-stat').textContent=atenciones.filter(r=>r.derivacion==='SI').length;
   document.getElementById('h-men-stat').textContent=atenciones.filter(r=>parseInt(r.edad||99)<18).length;
@@ -697,13 +870,13 @@ function showAlert(id,msg){
 function cargarViaje(id){
   const lista=lsJson(VIAJES_KEY)||[];
   viajeActual=lista.find(v=>v.id===id)||null;
-  if(!viajeActual)return;
+  if(!viajeActual) return;
   lsSet('as_last_viaje_medico',id);
   document.getElementById('hdr-nombre').textContent=viajeActual.nombre;
   participantes=[];
   atenciones=[];
+  iniciarAutoRefresh();
   window.recargarFichas(false);
-  // Pre-cargar atenciones en background
   const cacheKey='as_viaje_'+id+'_atenciones';
   cachedFetch(cacheKey,async()=>{
     const r=await sheetGet({tipo:'get_atenciones',viajeId:id});
@@ -711,7 +884,6 @@ function cargarViaje(id){
   },false).then(({data})=>{if(data)atenciones=data;}).catch(()=>{});
 }
 
-// ── Carga directa por ID (desde URL param o localStorage) ────
 async function cargarViajeById(id){
   const lista=lsJson(VIAJES_KEY)||[];
   viajeActual=lista.find(v=>v.id===id)||null;
@@ -735,6 +907,7 @@ async function cargarViajeById(id){
   document.getElementById('hdr-nombre').textContent=viajeActual.nombre;
   participantes=[];
   atenciones=[];
+  iniciarAutoRefresh();
   window.recargarFichas(false);
   const cacheKey='as_viaje_'+id+'_atenciones';
   cachedFetch(cacheKey,async()=>{
@@ -752,9 +925,22 @@ function init(){
   },1000);
   document.getElementById('r-fecha').value=new Date().toISOString().split('T')[0];
 
-  // Si viene con ?viaje=ID en la URL, cargar directo (sin depender del localStorage del admin)
+  medicoNombre=lsGet('as_medico_nombre')||'';
+  medicoMatricula=lsGet('as_medico_matricula')||'';
+
   const urlParams=new URLSearchParams(window.location.search);
   const paramViajeId=urlParams.get('viaje');
+
+  if(!medicoNombre){
+    // Show médico modal first; hide viaje modal
+    document.getElementById('modal-viaje').classList.remove('show');
+    document.getElementById('modal-medico').classList.add('show');
+    if(paramViajeId) pendingViajeId=paramViajeId;
+    return;
+  }
+
+  actualizarHeaderMedico();
+
   if(paramViajeId){
     document.getElementById('modal-viaje').classList.remove('show');
     cargarViajeById(paramViajeId);
