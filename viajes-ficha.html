@@ -141,6 +141,7 @@ window.enviarFicha = async function(){
   const alerg   = document.getElementById('f-alergias').value.trim();
   const cir     = document.getElementById('f-cirugias').value.trim();
   const obs     = document.getElementById('f-obs').value.trim();
+  const colegio = document.getElementById('f-colegio').value.trim();
   const edadNum = parseInt(edad||'99');
   const esMenor = edadNum>0 && edadNum<18;
   const tutorNom= esMenor?document.getElementById('f-tutor-nom').value.trim():'';
@@ -149,8 +150,8 @@ window.enviarFicha = async function(){
   const enfs=[];
   document.querySelectorAll('.enfermedad-cb:checked').forEach(cb=>enfs.push(cb.value));
 
-  if(!nombre||!edad||!contNom||!contTel){
-    mostrarAlerta('alert-err','Por favor complet&aacute; los campos obligatorios marcados con *.');
+  if(!nombre||!edad||!colegio||!contNom||!contTel){
+    mostrarAlerta('alert-err','Por favor complet&aacute; todos los campos obligatorios marcados con *.');
     return;
   }
   if(esMenor&&(!tutorNom||!tutorTel)){
@@ -168,7 +169,7 @@ window.enviarFicha = async function(){
     medicacion:med||'Ninguna', alergias:alerg||'Ninguna', cirugias:cir||'Ninguna',
     contactoEmergenciaNombre:contNom, contactoEmergenciaTel:contTel,
     obraSocial:obra, numAfiliado:afil,
-    tutorNombre:tutorNom, tutorTel, obs,
+    tutorNombre:tutorNom, tutorTel, obs, colegio,
     fechaEnvio:new Date().toISOString()
   };
 
@@ -245,6 +246,10 @@ function renderForm(nombrePart, nombreViaje){
       <div class="field">
         <label>Nombre completo <span style="color:#DC2626">*</span></label>
         <input type="text" id="f-nombre" value="${esc(nombrePart)}" readonly>
+      </div>
+      <div class="field">
+        <label>Colegio / Instituci&oacute;n <span style="color:#DC2626">*</span></label>
+        <input type="text" id="f-colegio" placeholder="Ej: Instituto San Mart&iacute;n" autocomplete="off" autocorrect="off">
       </div>
       <div class="g3">
         <div class="field">

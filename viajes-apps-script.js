@@ -23,7 +23,7 @@ const PART_HEADERS = [
   'edad', 'dni', 'sexo', 'grupoSanguineo', 'enfermedadesCronicas',
   'medicacion', 'alergias', 'cirugias',
   'contactoEmergenciaNombre', 'contactoEmergenciaTel',
-  'obraSocial', 'numAfiliado', 'tutorNombre', 'tutorTel', 'obs'
+  'obraSocial', 'numAfiliado', 'tutorNombre', 'tutorTel', 'obs', 'colegio'
 ];
 
 const ATENCION_HEADERS = [
@@ -189,7 +189,8 @@ function guardarFicha(ss, data) {
     numAfiliado:      data.numAfiliado || '',
     tutorNombre:      data.tutorNombre || '',
     tutorTel:         data.tutorTel || '',
-    obs:              data.obs || ''
+    obs:              data.obs || '',
+    colegio:          data.colegio || ''
   }));
   return { ok: true, msg: 'Participante creado con ficha' };
 }

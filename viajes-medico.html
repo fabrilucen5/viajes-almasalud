@@ -236,7 +236,10 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
             <span class="refresh-ts" id="fichas-ts"></span>
           </div>
           <div class="toolbar-actions">
-            <input type="text" id="buscar-part" placeholder="&#128269; Buscar..." oninput="window.filtrarFichas()" style="width:170px;font-size:14px;padding:9px 13px;border-radius:8px">
+            <select id="filtro-colegio" onchange="window.filtrarFichas()" style="width:auto;font-size:14px;padding:9px 13px;border-radius:8px;min-width:160px;display:none">
+              <option value="">Todos los colegios</option>
+            </select>
+            <input type="text" id="buscar-part" placeholder="&#128269; Buscar..." oninput="window.filtrarFichas()" style="width:160px;font-size:14px;padding:9px 13px;border-radius:8px">
             <button class="btn-outline" onclick="window.recargarFichas(true)">&#8635;</button>
           </div>
         </div>
@@ -549,6 +552,16 @@ window.recargarFichas = async function(force){
   if(offline) document.getElementById('offline-f').classList.add('show');
   document.getElementById('pills-fichas').classList.add('show');
   actualizarTimestamp();
+  // Populate colegio filter
+  const colSel=document.getElementById('filtro-colegio');
+  if(colSel){
+    const colegios=[...new Set(participantes.map(p=>(p.fichaData?.colegio||p.colegio||'')).filter(Boolean))].sort();
+    const current=colSel.value;
+    colSel.innerHTML='<option value="">Todos los colegios</option>';
+    colegios.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;colSel.appendChild(o);});
+    if(colegios.includes(current)) colSel.value=current;
+    colSel.style.display=colegios.length>1?'':'none';
+  }
   window.filtrarFichas();
   cargarSelectParticipantes();
 };
@@ -562,7 +575,12 @@ window.setFiltro = function(tipo, btn){
 
 window.filtrarFichas = function(){
   const q=(document.getElementById('buscar-part').value||'').toLowerCase();
-  let lista=participantes.filter(p=>!q||p.nombre.toLowerCase().includes(q));
+  const colFilt=(document.getElementById('filtro-colegio')?.value||'');
+  let lista=participantes.filter(p=>{
+    if(q&&!p.nombre.toLowerCase().includes(q)) return false;
+    if(colFilt){const fd=p.fichaData||p;if((fd.colegio||'')!==colFilt) return false;}
+    return true;
+  });
 
   if(filtroFichas==='sin_ficha'){
     lista=lista.filter(p=>!(p.fichaCompletada===true||String(p.fichaCompletada).toUpperCase()==='TRUE'));
@@ -605,7 +623,9 @@ function renderFichas(lista){
     const tieneEnf=fd.enfermedadesCronicas&&String(fd.enfermedadesCronicas).trim();
     const derPrev=ats.filter(a=>a.participanteId===p.id&&a.derivacion==='SI').length;
     const edadStr=fd.edad?(fd.edad+' a&ntilde;os'):'&mdash;';
-    const metaStr=completada&&fd.edad?(fd.edad+' a&ntilde;os'+(fd.sexo?' &middot; '+esc(fd.sexo):'')):'';
+    const colegioStr=fd.colegio?esc(fd.colegio):'';
+    const edadSexo=completada&&fd.edad?(fd.edad+' a&ntilde;os'+(fd.sexo?' &middot; '+esc(fd.sexo):'')):'';
+    const metaStr=[edadSexo,colegioStr].filter(Boolean).join(' &bull; ');
     const emerStr=fd.contactoEmergenciaNombre?(esc(fd.contactoEmergenciaNombre)+' &mdash; '+esc(fd.contactoEmergenciaTel)):'&mdash;';
     const obraStr=fd.obraSocial?(esc(fd.obraSocial)+(fd.numAfiliado?' (N&deg;'+esc(fd.numAfiliado)+')':'')):'&mdash;';
     const tutorStr=fd.tutorNombre?(esc(fd.tutorNombre)+' &mdash; '+esc(fd.tutorTel)):'';
@@ -615,8 +635,10 @@ function renderFichas(lista){
       +(tieneEnf?'<span class="badge b-info">'+esc(fd.enfermedadesCronicas)+'</span>':'')
       +(derPrev?'<span class="badge b-der">'+derPrev+' derivaci&oacute;n(es)</span>':'')
       +(fd.grupoSanguineo?'<span class="badge b-info">'+esc(fd.grupoSanguineo)+'</span>':'')
+      +(colegioStr?'<span class="badge" style="background:#f0f4ff;color:#003D6B;border:1px solid #c5d5f0">&#127979; '+colegioStr+'</span>':'')
       +'</div>'):'';
     const expandHtml=completada?('<div class="ficha-expand" id="fe-'+i+'">'
+      +fr('Colegio',fd.colegio)
       +fr('Edad',edadStr)
       +fr('DNI',fd.dni)
       +fr('Grupo sangu&iacute;neo',fd.grupoSanguineo)
