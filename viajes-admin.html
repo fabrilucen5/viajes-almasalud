@@ -48,10 +48,11 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .btn-gold:active{background:var(--gold2)}
 .btn-outline{padding:10px 16px;background:#fff;color:var(--navy);border:1.5px solid var(--navy);border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;transition:.2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .btn-outline:active{background:var(--bg)}
-.btn-sm{padding:6px 12px;font-size:12px;font-weight:600;border:none;border-radius:7px;cursor:pointer;font-family:'Poppins',sans-serif;-webkit-tap-highlight-color:transparent;touch-action:manipulation;white-space:nowrap}
+.btn-sm{padding:6px 11px;font-size:12px;font-weight:600;border:none;border-radius:7px;cursor:pointer;font-family:'Poppins',sans-serif;-webkit-tap-highlight-color:transparent;touch-action:manipulation;white-space:nowrap}
 .btn-copy-sm{background:var(--bg);color:var(--navy);border:1px solid var(--border)}
 .btn-copy-sm.done{background:#e8edf8}
 .btn-del-sm{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
+.btn-wa-sm{background:#e7f7e7;color:#16a34a;border:1px solid #86efac}
 .alert{border-radius:10px;padding:12px 16px;font-size:14px;font-weight:500;margin-bottom:14px;display:none}
 .alert-ok{background:var(--green-bg);border:1.5px solid var(--green-border);color:#14532d}
 .alert-err{background:var(--red-bg);border:1.5px solid var(--red-border);color:#7f1d1d}
@@ -64,9 +65,12 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .stat-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
 .stat-value{font-size:24px;font-weight:700;color:var(--navy)}
 .toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}
-.toolbar-actions{display:flex;gap:8px;flex-wrap:wrap}
-.add-row{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;background:var(--bg);border-radius:10px;padding:14px;margin-bottom:12px}
+.toolbar-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+/* Add row */
+.add-row{display:flex;flex-direction:column;gap:10px;background:var(--bg);border-radius:10px;padding:14px;margin-bottom:12px}
 .add-row .field{margin-bottom:0}
+.add-row-inner{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+/* Participant list */
 .participant{display:flex;align-items:flex-start;gap:10px;padding:13px 0;border-bottom:.5px solid var(--border);flex-wrap:wrap}
 .participant:last-child{border-bottom:none}
 .part-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:6px}
@@ -80,6 +84,8 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .pb-ok{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
 .pb-pend{background:#fff4e0;color:#7a4f00;border:1px solid var(--gold)}
 .part-actions{display:flex;gap:5px;flex-shrink:0;align-items:flex-start;flex-wrap:wrap}
+.sect-divider{font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:1px;margin:14px 0 10px;padding-top:14px;border-top:1px solid var(--border)}
+/* Atenciones */
 .record{border-bottom:.5px solid var(--border);padding:12px 0}.record:last-child{border-bottom:none}
 .rec-header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:5px}
 .rec-name{font-size:15px;font-weight:600;color:var(--navy)}
@@ -116,11 +122,11 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
   .hdr-title{font-size:17px}
   .hdr-viaje{margin-left:0;width:100%;text-align:left}
   .body{padding:14px}
-  .g2{grid-template-columns:1fr}
+  .g2,.add-row-inner{grid-template-columns:1fr}
   .stats-row{grid-template-columns:1fr 1fr}
-  .add-row{grid-template-columns:1fr}
   .participant{flex-wrap:wrap}
   .part-actions{width:100%;justify-content:flex-end}
+  .toolbar-actions{flex-wrap:wrap}
 }
 </style>
 </head>
@@ -137,7 +143,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     </div>
     <div class="field">
       <label>Nombre del viaje <span style="color:#DC2626">*</span></label>
-      <input type="text" id="in-viaje" placeholder="Ej: Viaje Egresados Colegio San Mart&iacute;n &mdash; Bariloche 2026" autocomplete="off" autocorrect="off">
+      <input type="text" id="in-viaje" placeholder="Ej: Viaje Egresados San Mart&iacute;n &mdash; Bariloche 2026" autocomplete="off" autocorrect="off">
     </div>
     <div id="setup-err" style="display:none;color:#DC2626;font-size:13px;margin-bottom:12px">&#9888; Complet&aacute; todos los campos.</div>
     <div class="modal-btns">
@@ -163,10 +169,11 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 <div class="overlay" id="modal-import">
   <div class="modal">
     <h3>&#128203; Importar participantes</h3>
-    <p>Peg&aacute; la lista copiada desde Excel o WhatsApp. <strong>Una persona por l&iacute;nea.</strong> Nombre y contacto separados por tab, coma o punto y coma. El contacto es opcional.</p>
+    <p>Peg&aacute; la lista. <strong>Una persona por l&iacute;nea.</strong> Columnas separadas por tab, punto y coma o coma:<br>
+    <code style="font-size:12px;background:var(--bg);padding:2px 6px;border-radius:4px">Nombre &nbsp;|&nbsp; Contacto (opcional) &nbsp;|&nbsp; Colegio (opcional)</code></p>
     <div class="field">
       <textarea id="import-texto" rows="7" placeholder="Ejemplo:
-Juan Garc&iacute;a&#9;+54 9 11 1234-5678
+Juan Garc&iacute;a&#9;+54 9 11 1234-5678&#9;Colegio San Mart&iacute;n
 Mar&iacute;a L&oacute;pez&#9;maria@email.com
 Pedro Fern&aacute;ndez" oninput="window.previsualizarImport()"></textarea>
     </div>
@@ -212,31 +219,49 @@ Pedro Fern&aacute;ndez" oninput="window.previsualizarImport()"></textarea>
       <div class="alert alert-ok" id="alerta-p"></div>
       <div class="alert alert-err" id="alerta-p-err"></div>
 
+      <!-- Stats de completitud -->
+      <div class="stats-row" id="admin-stats-row" style="display:none">
+        <div class="stat"><div class="stat-label">Total</div><div class="stat-value" id="adm-total">0</div></div>
+        <div class="stat gold"><div class="stat-label">Fichas &#10003;</div><div class="stat-value" id="adm-completas">0</div></div>
+        <div class="stat"><div class="stat-label">Pendientes</div><div class="stat-value" id="adm-pend">0</div></div>
+      </div>
+
       <div class="card">
+        <!-- Toolbar búsqueda -->
         <div class="toolbar">
-          <div class="section-title" style="margin-bottom:0;padding-bottom:0;border-bottom:none">Agregar participante</div>
+          <div class="section-title" style="margin-bottom:0;padding-bottom:0;border-bottom:none">Participantes</div>
           <div class="toolbar-actions">
-            <button class="btn-outline" onclick="window.abrirImport()">&#128203; Importar lista</button>
-            <button class="btn-outline" onclick="window.recargarParticipantes(true)">&#8635; Recargar</button>
+            <input type="text" id="buscar-admin" placeholder="&#128269; Buscar..." oninput="window.buscarParticipante()" style="width:150px;font-size:14px;padding:9px 13px;border-radius:8px">
+            <button class="btn-outline" onclick="window.abrirImport()">&#128203; Importar</button>
+            <button class="btn-outline" onclick="window.recargarParticipantes(true)">&#8635;</button>
           </div>
         </div>
+
+        <!-- Formulario agregar -->
+        <div class="sect-divider">Agregar participante</div>
         <div class="add-row">
-          <div class="field">
-            <label>Nombre completo</label>
-            <input type="text" id="add-nombre" placeholder="Nombre y apellido" autocomplete="off" autocorrect="off">
+          <div class="add-row-inner">
+            <div class="field">
+              <label>Nombre completo</label>
+              <input type="text" id="add-nombre" placeholder="Nombre y apellido" autocomplete="off" autocorrect="off">
+            </div>
+            <div class="field">
+              <label>Email o celular</label>
+              <input type="text" id="add-contacto" placeholder="email@... o +54 9..." autocomplete="off">
+            </div>
           </div>
           <div class="field">
-            <label>Email o celular</label>
-            <input type="text" id="add-contacto" placeholder="email@... o +54 9..." autocomplete="off">
+            <label>Colegio / Instituci&oacute;n</label>
+            <input type="text" id="add-colegio" placeholder="Ej: Instituto San Mart&iacute;n" autocomplete="off" autocorrect="off">
           </div>
-          <button class="btn-primary" style="width:auto;padding:13px 18px" onclick="window.agregarParticipante()">+ Agregar</button>
+          <button class="btn-primary" onclick="window.agregarParticipante()">+ Agregar participante</button>
         </div>
 
         <div id="participant-list"><div class="loading-wrap"><div class="spinner"></div>Cargando participantes...</div></div>
       </div>
 
       <button class="btn-gold" style="width:100%;margin-bottom:8px" onclick="window.copiarTodosLinks()">&#128279; Copiar todos los links para WhatsApp</button>
-      <button class="btn-outline" style="width:100%;margin-bottom:14px" onclick="window.copiarLinkMedico()">&#129657; Link para el médico</button>
+      <button class="btn-outline" style="width:100%;margin-bottom:14px" onclick="window.copiarLinkMedico()">&#129657; Link para el m&eacute;dico</button>
     </div>
 
     <!-- TAB ATENCIONES -->
@@ -271,8 +296,9 @@ const CACHE_TTL   = 5 * 60 * 1000;
 let viajeActual = null;
 let participantesCache = [];
 let importParsed = [];
+let busquedaAdmin = '';
+let renderCache = []; // índice para los onclick de WhatsApp
 
-// ── Storage ──
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
 function lsJson(k){try{const r=lsGet(k);return r?JSON.parse(r):null;}catch(e){return null;}}
@@ -290,7 +316,6 @@ function generarLinkMedico(viajeId){
   return BASE_URL+'viajes-medico.html?viaje='+encodeURIComponent(viajeId);
 }
 
-// ── Fetch helpers ──
 async function sheetGet(params){
   const url = SHEETS_URL+'?'+new URLSearchParams(params).toString();
   const res = await fetch(url);
@@ -301,7 +326,6 @@ function sheetPost(data){
   fetch(SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}).catch(()=>{});
 }
 
-// ── Cache con TTL ──
 async function cachedFetch(cacheKey, fetcher, force){
   const ts = parseInt(lsGet(cacheKey+'_ts')||'0');
   if(!force && Date.now()-ts < CACHE_TTL){
@@ -374,15 +398,21 @@ window.previsualizarImport = function(){
   if(!resultado.length){prevEl.style.display='none';document.getElementById('btn-confirm-import').disabled=true;return;}
   prevEl.style.display='block';
   document.getElementById('import-preview-list').innerHTML = resultado.map(p=>
-    `<div class="import-row"><span style="font-weight:600;color:var(--navy)">${esc(p.nombre)}</span><span style="color:var(--muted);font-size:12px">${esc(p.contacto||'')}</span></div>`
-  ).join('')+(errores.length?`<div class="import-err">&#9888; ${errores.length} l&iacute;nea(s) ignorada(s) por estar vac&iacute;a(s).</div>`:'');
+    `<div class="import-row">
+      <span style="font-weight:600;color:var(--navy)">${esc(p.nombre)}</span>
+      <span style="color:var(--muted);font-size:12px">${[p.contacto,p.colegio].filter(Boolean).join(' &middot; ')}</span>
+    </div>`
+  ).join('')+(errores.length?`<div class="import-err">&#9888; ${errores.length} l&iacute;nea(s) ignorada(s).</div>`:'');
   document.getElementById('import-preview-count').textContent = resultado.length+' participantes encontrados.';
   document.getElementById('btn-confirm-import').disabled = false;
 };
 
 window.confirmarImport = function(){
   if(!viajeActual||!importParsed.length) return;
-  const nuevos = importParsed.map(p=>({id:'p'+Date.now()+Math.random().toString(36).slice(2,6), nombre:p.nombre, contacto:p.contacto||''}));
+  const nuevos = importParsed.map(p=>({
+    id:'p'+Date.now()+Math.random().toString(36).slice(2,6),
+    nombre:p.nombre, contacto:p.contacto||'', colegio:p.colegio||''
+  }));
   const cacheKey = 'as_viaje_'+viajeActual.id+'_participantes';
   const cached = lsJson(cacheKey)||[];
   const merged = [...cached, ...nuevos];
@@ -402,11 +432,11 @@ function parsearLista(texto){
     const t=linea.trim();
     if(!t){errores.push(i+1);return;}
     let partes;
-    if(t.includes('\t')) partes=t.split('\t').map(s=>s.trim()).filter(Boolean);
-    else if(t.includes(';')) partes=t.split(';').map(s=>s.trim()).filter(Boolean);
-    else if(t.includes(',')) partes=t.split(',',2).map(s=>s.trim()).filter(Boolean);
+    if(t.includes('\t'))       partes=t.split('\t').map(s=>s.trim()).filter(Boolean);
+    else if(t.includes(';'))   partes=t.split(';').map(s=>s.trim()).filter(Boolean);
+    else if(t.includes(','))   partes=t.split(',',3).map(s=>s.trim()).filter(Boolean);
     else partes=[t];
-    if(partes[0]) resultado.push({nombre:partes[0], contacto:partes[1]||''});
+    if(partes[0]) resultado.push({nombre:partes[0], contacto:partes[1]||'', colegio:partes[2]||''});
     else errores.push(i+1);
   });
   return {resultado, errores};
@@ -421,13 +451,20 @@ window.goTab = function(id, btn){
   if(id==='atenciones') window.recargarAtenciones(false);
 };
 
+// ── Búsqueda de participantes ──
+window.buscarParticipante = function(){
+  busquedaAdmin=(document.getElementById('buscar-admin').value||'').toLowerCase();
+  renderParticipantes(participantesCache);
+};
+
 // ── Agregar participante individual ──
 window.agregarParticipante = function(){
   if(!viajeActual){mostrarAlerta('alerta-p-err','No hay viaje activo.','err');return;}
   const nombre = document.getElementById('add-nombre').value.trim();
   const contacto = document.getElementById('add-contacto').value.trim();
+  const colegio = document.getElementById('add-colegio').value.trim();
   if(!nombre){mostrarAlerta('alerta-p-err','Ingres&aacute; el nombre del participante.','err');return;}
-  const part = {id:'p'+Date.now(), nombre, contacto};
+  const part = {id:'p'+Date.now(), nombre, contacto, colegio};
   const cacheKey = 'as_viaje_'+viajeActual.id+'_participantes';
   const cached = lsJson(cacheKey)||[];
   cached.push(part);
@@ -437,23 +474,33 @@ window.agregarParticipante = function(){
   sheetPost({tipo:'agregar_participantes', viajeId:viajeActual.id, viaje:viajeActual.nombre, participantes:[part]});
   document.getElementById('add-nombre').value='';
   document.getElementById('add-contacto').value='';
+  document.getElementById('add-colegio').value='';
   renderParticipantes(cached);
   mostrarAlerta('alerta-p', esc(nombre)+' agregado correctamente.', 'ok');
 };
 
 window.eliminarParticipante = function(partId){
-  if(!confirm('¿Eliminar a este participante?'))return;
+  if(!confirm('¿Eliminar a este participante? Se borrará también de Sheets.'))return;
   const cacheKey = 'as_viaje_'+viajeActual.id+'_participantes';
   const lista = (lsJson(cacheKey)||[]).filter(p=>p.id!==partId);
   lsSet(cacheKey,JSON.stringify(lista));
   lsSet(cacheKey+'_ts',String(Date.now()));
   participantesCache=lista;
+  sheetPost({tipo:'eliminar_participante', viajeId:viajeActual.id, participanteId:partId});
   renderParticipantes(lista);
+};
+
+window.enviarWhatsApp = function(idx){
+  const p = renderCache[idx];
+  if(!p||!viajeActual) return;
+  const link = generarLink(viajeActual.id, p.id, viajeActual.nombre, p.nombre);
+  const text = 'Hola '+p.nombre+'!\n\nTe enviamos el link para completar tu ficha médica del viaje:\n'+link+'\n\nEs importante que la completes antes del viaje. ¡Gracias!';
+  window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');
 };
 
 window.copiarLink = function(link, btn){
   if(navigator.clipboard){
-    navigator.clipboard.writeText(link).then(()=>{btn.textContent='&#10003;';btn.classList.add('done');setTimeout(()=>{btn.textContent='Link';btn.classList.remove('done');},2000);}).catch(()=>prompt('Link:',link));
+    navigator.clipboard.writeText(link).then(()=>{btn.textContent='&#10003;';btn.classList.add('done');setTimeout(()=>{btn.innerHTML='Link';btn.classList.remove('done');},2000);}).catch(()=>prompt('Link:',link));
   } else { prompt('Link:',link); }
 };
 
@@ -467,8 +514,9 @@ window.copiarLinkMedico = function(){
 
 window.copiarTodosLinks = function(){
   if(!viajeActual||!participantesCache.length){alert('No hay participantes cargados.');return;}
+  const sorted=[...participantesCache].sort((a,b)=>a.nombre.localeCompare(b.nombre));
   const header='*'+viajeActual.nombre+'*\nFichas médicas — por favor completá el formulario antes del viaje:\n';
-  const links = participantesCache.map(p=>{
+  const links = sorted.map(p=>{
     const link=generarLink(viajeActual.id,p.id,viajeActual.nombre,p.nombre);
     return p.nombre+' — '+link;
   }).join('\n');
@@ -494,21 +542,52 @@ window.recargarParticipantes = async function(force){
 };
 
 function renderParticipantes(lista){
+  // Update stats
+  const total=lista.length;
+  const completas=lista.filter(p=>p.fichaCompletada===true||String(p.fichaCompletada).toUpperCase()==='TRUE').length;
+  const statsRow=document.getElementById('admin-stats-row');
+  if(statsRow&&total>0){
+    statsRow.style.display='';
+    document.getElementById('adm-total').textContent=total;
+    document.getElementById('adm-completas').textContent=completas;
+    document.getElementById('adm-pend').textContent=total-completas;
+  }
+
+  // Filter by search
+  const q=busquedaAdmin;
+  const filtered=q?lista.filter(p=>
+    p.nombre.toLowerCase().includes(q)||
+    (p.colegio||'').toLowerCase().includes(q)||
+    (p.contacto||'').toLowerCase().includes(q)
+  ):lista;
+
+  // Sort alphabetically
+  const sorted=[...filtered].sort((a,b)=>a.nombre.localeCompare(b.nombre));
+  renderCache=sorted;
+
   const el=document.getElementById('participant-list');
-  if(!lista.length){el.innerHTML='<div class="empty">Todav&iacute;a no hay participantes. Agreg&aacute; el primero arriba o import&aacute; una lista.</div>';return;}
-  el.innerHTML=lista.map(p=>{
+  if(!sorted.length){
+    el.innerHTML=q
+      ?'<div class="empty">No hay resultados para esa b&uacute;squeda.</div>'
+      :'<div class="empty">Todav&iacute;a no hay participantes. Agreg&aacute; el primero arriba o import&aacute; una lista.</div>';
+    return;
+  }
+
+  el.innerHTML=sorted.map((p,idx)=>{
     const link=generarLink(viajeActual.id,p.id,viajeActual.nombre,p.nombre);
     const completada=p.fichaCompletada===true||String(p.fichaCompletada).toUpperCase()==='TRUE';
+    const colegioTag=p.colegio?` <span style="font-size:11px;font-weight:400;color:var(--muted)">&middot; ${esc(p.colegio)}</span>`:'';
     return `<div class="participant">
       <div class="part-dot ${completada?'ok':'pend'}"></div>
       <div class="part-info">
-        <div class="part-name">${esc(p.nombre)}</div>
+        <div class="part-name">${esc(p.nombre)}${colegioTag}</div>
         ${p.contacto?`<div class="part-contact">${esc(p.contacto)}</div>`:''}
         <span class="part-link">${link}</span>
       </div>
-      <span class="part-badge ${completada?'pb-ok':'pb-pend'}">${completada?'&#10003; Ficha completa':'Pendiente'}</span>
+      <span class="part-badge ${completada?'pb-ok':'pb-pend'}">${completada?'&#10003; Completa':'Pendiente'}</span>
       <div class="part-actions">
         <button class="btn-sm btn-copy-sm" onclick="window.copiarLink('${link.replace(/'/g,"\\'")}',this)">Link</button>
+        <button class="btn-sm btn-wa-sm" onclick="window.enviarWhatsApp(${idx})">WhatsApp</button>
         <button class="btn-sm btn-del-sm" onclick="window.eliminarParticipante('${p.id}')">&#10005;</button>
       </div>
     </div>`;
@@ -538,7 +617,7 @@ function renderAtenciones(at){
   el.innerHTML=at.map(r=>`
     <div class="record">
       <div class="rec-header">
-        <span class="rec-name">${esc(r.participante||r.nombre||'&mdash;')}</span>
+        <span class="rec-name">${esc(r.participante||r.nombre||'&mdash;')}${r.colegio?` <span style="font-size:12px;font-weight:400;color:var(--muted)">&middot; ${esc(r.colegio)}</span>`:''}</span>
         <span class="rec-date">${r.fecha||''} ${r.hora||''}</span>
       </div>
       <div class="badges">
@@ -552,10 +631,10 @@ function renderAtenciones(at){
 window.exportarCSV = function(){
   const at=lsJson('as_viaje_'+(viajeActual?.id)+'_atenciones')||[];
   if(!at.length){alert('No hay atenciones para exportar.');return;}
-  const cols=['N°','Fecha','Hora','Participante','Profesional','Sede','Motivo','Zona','Diagnóstico','Atención','Derivación','Detalle derivación','Observaciones'];
+  const cols=['N°','Fecha','Hora','Participante','Colegio','Profesional','Sede','Motivo','Zona','Diagnóstico','Atención','Derivación','Detalle derivación','Observaciones'];
   let csv='﻿'+cols.map(c=>'"'+c+'"').join(';')+'\n';
   at.forEach((r,i)=>{
-    csv+=[i+1,r.fecha||'',r.hora||'',r.participante||'',r.profesional||'',r.sede||'',r.motivo||'',r.zona||'',r.diagnostico||'',r.atencion||'',r.derivacion||'',r.derDetalle||'',r.obs||'']
+    csv+=[i+1,r.fecha||'',r.hora||'',r.participante||'',r.colegio||'',r.profesional||'',r.sede||'',r.motivo||'',r.zona||'',r.diagnostico||'',r.atencion||'',r.derivacion||'',r.derDetalle||'',r.obs||'']
       .map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')+'\n';
   });
   const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
@@ -580,6 +659,9 @@ function cargarViaje(id){
   if(!viajeActual)return;
   lsSet('as_last_viaje',id);
   document.getElementById('hdr-nombre').textContent=viajeActual.nombre;
+  busquedaAdmin='';
+  const buscarEl=document.getElementById('buscar-admin');
+  if(buscarEl) buscarEl.value='';
   window.recargarParticipantes(false);
 }
 

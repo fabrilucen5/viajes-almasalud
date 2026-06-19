@@ -125,6 +125,10 @@ window.toggleCheck = function(el){
   const cb = el.querySelector('input[type=checkbox]');
   cb.checked = !cb.checked;
   el.classList.toggle('checked', cb.checked);
+  if(cb.value==='Otra'){
+    const wrap=document.getElementById('otra-enf-wrap');
+    if(wrap) wrap.style.display=cb.checked?'block':'none';
+  }
 };
 
 window.enviarFicha = async function(){
@@ -149,6 +153,10 @@ window.enviarFicha = async function(){
 
   const enfs=[];
   document.querySelectorAll('.enfermedad-cb:checked').forEach(cb=>enfs.push(cb.value));
+  if(enfs.includes('Otra')){
+    const otraText=(document.getElementById('f-otra-enf')?.value||'').trim();
+    if(otraText) enfs[enfs.indexOf('Otra')]='Otra: '+otraText;
+  }
 
   if(!nombre||!edad||!colegio||!contNom||!contTel){
     mostrarAlerta('alert-err','Por favor complet&aacute; todos los campos obligatorios marcados con *.');
@@ -283,6 +291,9 @@ function renderForm(nombrePart, nombreViaje){
           <div class="check-item" onclick="window.toggleCheck(this)"><input type="checkbox" class="enfermedad-cb" value="Epilepsia"><span>Epilepsia</span></div>
           <div class="check-item" onclick="window.toggleCheck(this)"><input type="checkbox" class="enfermedad-cb" value="Cardiopat&iacute;a"><span>Cardiopat&iacute;a</span></div>
           <div class="check-item" onclick="window.toggleCheck(this)"><input type="checkbox" class="enfermedad-cb" value="Otra"><span>Otra</span></div>
+        </div>
+        <div id="otra-enf-wrap" style="display:none;margin-top:8px">
+          <input type="text" id="f-otra-enf" placeholder="Especificá la enfermedad cr&oacute;nica..." autocomplete="off">
         </div>
       </div>
       <div class="field">

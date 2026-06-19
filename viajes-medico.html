@@ -199,6 +199,17 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
   </div>
 </div>
 
+<!-- MODAL FICHA PREVIEW (desde historial) -->
+<div class="overlay" id="modal-ficha-preview">
+  <div class="modal">
+    <h3 id="fp-nombre" style="margin-bottom:14px"></h3>
+    <div id="fp-body" style="font-size:13px;line-height:1.8;background:var(--bg);border-radius:9px;padding:14px"></div>
+    <div class="modal-btns" style="margin-top:16px">
+      <button class="btn-outline" onclick="document.getElementById('modal-ficha-preview').classList.remove('show')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
 <!-- APP -->
 <div class="wrap">
   <div class="header">
@@ -267,8 +278,8 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
             <input type="date" id="r-fecha">
           </div>
           <div class="field">
-            <label>Hora</label>
-            <input class="readonly-field" id="r-hora" readonly>
+            <label>Hora <span style="font-size:10px;font-weight:400;color:var(--muted);text-transform:none">(editable)</span></label>
+            <input type="text" id="r-hora" placeholder="HH:MM" autocomplete="off" inputmode="numeric">
           </div>
           <div class="field">
             <label>Sede / Ubicaci&oacute;n <span style="color:#DC2626">*</span></label>
@@ -724,6 +735,7 @@ window.guardarAtencion = async function(){
 
   const p=participantes.find(x=>x.id===partId);
   const edad=p?.fichaData?.edad||p?.edad||'';
+  const colegio=p?.fichaData?.colegio||p?.colegio||'';
 
   const btn=document.getElementById('btn-guardar');
   btn.disabled=true;btn.textContent='Guardando...';
@@ -731,7 +743,7 @@ window.guardarAtencion = async function(){
   const r={
     id:'a'+Date.now(), viajeId:viajeActual.id, viaje:viajeActual.nombre,
     participanteId:esOtro?'':partId, participante:partNombre,
-    edad, fecha, hora, sede, profesional:prof,
+    edad, colegio, fecha, hora, sede, profesional:prof,
     motivo, zona, diagnostico:diag, atencion:aten, obs,
     derivacion:der?'SI':'NO', derDetalle:derDet,
     fechaRegistro:new Date().toISOString()
@@ -844,12 +856,13 @@ window.renderHistorial = function(){
     return `<div class="record">
       <div class="rec-top">
         <div>
-          <div class="rec-name">${esc(r.participante||'&mdash;')}</div>
+          <div class="rec-name">${esc(r.participante||'&mdash;')}${r.colegio?` <span style="font-size:12px;font-weight:400;color:var(--muted)">&middot; ${esc(r.colegio)}</span>`:''}</div>
           <div class="rec-meta">${fecha} &mdash; ${r.hora||'--'} &middot; ${esc(r.sede||'')}</div>
         </div>
         <div style="display:flex;gap:5px;flex-shrink:0;align-items:flex-start;flex-wrap:wrap">
           ${r.derivacion==='SI'?'<span class="badge b-der">DERIVADO</span>':''}
           ${menor?'<span class="badge" style="background:#FFF8E7;color:#7a4f00;border:1px solid #F5A623">Menor</span>':''}
+          ${r.participanteId?`<button class="badge" style="background:#e8edf8;color:#003D6B;border:none;cursor:pointer;font-family:inherit" onclick="window.verFichaDesdeHistorial('${r.participanteId}')">&#128203; Ficha</button>`:''}
         </div>
       </div>
       <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px">
@@ -866,12 +879,40 @@ window.renderHistorial = function(){
   }).join('');
 };
 
+window.verFichaDesdeHistorial = function(participanteId){
+  const p=participantes.find(x=>x.id===participanteId);
+  if(!p){alert('Ficha no disponible. Recargá las fichas primero en la pestaña Fichas.');return;}
+  const completada=p.fichaCompletada===true||String(p.fichaCompletada).toUpperCase()==='TRUE';
+  if(!completada){alert(p.nombre+' todavía no completó su ficha médica.');return;}
+  const fd=p.fichaData||p;
+  document.getElementById('fp-nombre').textContent=p.nombre;
+  const rows=[
+    ['Colegio',fd.colegio],
+    ['Edad',fd.edad?fd.edad+' años':''],
+    ['DNI',fd.dni],['Sexo',fd.sexo],
+    ['Grupo sanguíneo',fd.grupoSanguineo],
+    ['Enf. crónicas',fd.enfermedadesCronicas||'Ninguna'],
+    ['Medicación',fd.medicacion||'Ninguna'],
+    ['Alergias',fd.alergias||'Ninguna'],
+    ['Cirugías',fd.cirugias||'Ninguna'],
+    ['Contacto emergencia',fd.contactoEmergenciaNombre?(fd.contactoEmergenciaNombre+' — '+fd.contactoEmergenciaTel):''],
+    ['Obra social',fd.obraSocial],['N° afiliado',fd.numAfiliado],
+    ['Padre/Madre/Tutor',fd.tutorNombre?(fd.tutorNombre+' — '+fd.tutorTel):''],
+    ['Observaciones',fd.obs]
+  ];
+  document.getElementById('fp-body').innerHTML=rows
+    .filter(([,v])=>v&&String(v).trim())
+    .map(([l,v])=>`<div class="ficha-row"><strong>${l}</strong>${esc(String(v))}</div>`)
+    .join('');
+  document.getElementById('modal-ficha-preview').classList.add('show');
+};
+
 window.exportarCSV = function(){
   if(!viajeActual||!atenciones.length){alert('No hay atenciones para exportar.');return;}
-  const cols=['N°','Fecha','Hora','Participante','Profesional','Sede','Motivo','Zona','Diagnóstico','Atención','Derivación','Detalle derivación','Observaciones'];
+  const cols=['N°','Fecha','Hora','Participante','Colegio','Profesional','Sede','Motivo','Zona','Diagnóstico','Atención','Derivación','Detalle derivación','Observaciones'];
   let csv='﻿'+cols.map(c=>'"'+c+'"').join(';')+'\n';
   atenciones.forEach((r,i)=>{
-    csv+=[i+1,r.fecha||'',r.hora||'',r.participante||'',r.profesional||'',r.sede||'',r.motivo||'',r.zona||'',r.diagnostico||'',r.atencion||'',r.derivacion||'',r.derDetalle||'',r.obs||'']
+    csv+=[i+1,r.fecha||'',r.hora||'',r.participante||'',r.colegio||'',r.profesional||'',r.sede||'',r.motivo||'',r.zona||'',r.diagnostico||'',r.atencion||'',r.derivacion||'',r.derDetalle||'',r.obs||'']
       .map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')+'\n';
   });
   const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
@@ -943,7 +984,8 @@ function init(){
   setInterval(()=>{
     const n=new Date();
     const el=document.getElementById('r-hora');
-    if(el)el.value=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+    if(el&&document.activeElement!==el)
+      el.value=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
   },1000);
   document.getElementById('r-fecha').value=new Date().toISOString().split('T')[0];
 

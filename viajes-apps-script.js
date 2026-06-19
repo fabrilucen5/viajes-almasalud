@@ -28,7 +28,7 @@ const PART_HEADERS = [
 
 const ATENCION_HEADERS = [
   'viajeId', 'id', 'fecha', 'hora', 'sede', 'profesional',
-  'participanteId', 'participante', 'edad',
+  'participanteId', 'participante', 'edad', 'colegio',
   'motivo', 'zona', 'diagnostico', 'atencion',
   'derivacion', 'derDetalle', 'obs', 'fechaRegistro'
 ];
@@ -44,6 +44,7 @@ function doPost(e) {
       case 'agregar_participantes': result = agregarParticipantes(ss, data); break;
       case 'ficha_medica':          result = guardarFicha(ss, data);         break;
       case 'registrar_atencion':    result = registrarAtencion(ss, data);    break;
+      case 'eliminar_participante': result = eliminarParticipante(ss, data); break;
       default: result = { ok: false, error: 'Tipo desconocido: ' + data.tipo };
     }
     return jsonOut(result);
@@ -133,7 +134,7 @@ function agregarParticipantes(ss, data) {
     if (existentes.includes(String(p.id))) return;
     sheet.appendRow(rowToValues(PART_HEADERS, {
       viajeId, id: p.id, nombre: p.nombre, contacto: p.contacto || '',
-      fichaCompletada: false, fechaFicha: ''
+      fichaCompletada: false, fechaFicha: '', colegio: p.colegio || ''
     }));
     added++;
   });
@@ -239,6 +240,24 @@ function getParticipante(ss, viajeId, participanteId) {
       String(rows[0].fichaCompletada).toUpperCase() === 'TRUE';
   }
   return { ok: true, participante: rows[0] || null };
+}
+
+// ─── Escritura: eliminar_participante ────────────────────────────────
+function eliminarParticipante(ss, data) {
+  const sheet = ss.getSheetByName('Participantes');
+  if (!sheet) return { ok: false, error: 'Hoja no encontrada' };
+  const values = sheet.getDataRange().getValues();
+  const headers = values[0].map(String);
+  const viajeIdIdx = headers.indexOf('viajeId');
+  const idIdx      = headers.indexOf('id');
+  for (let i = values.length - 1; i >= 1; i--) {
+    if (String(values[i][viajeIdIdx]) === String(data.viajeId) &&
+        String(values[i][idIdx])      === String(data.participanteId)) {
+      sheet.deleteRow(i + 1);
+      return { ok: true };
+    }
+  }
+  return { ok: true, msg: 'No encontrado en Sheets' };
 }
 
 // ─── Lectura: get_atenciones ──────────────────────────────────────────
