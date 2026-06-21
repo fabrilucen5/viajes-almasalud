@@ -261,7 +261,10 @@ Pedro Fern&aacute;ndez" oninput="window.previsualizarImport()"></textarea>
       <div class="card">
         <!-- Toolbar búsqueda -->
         <div class="toolbar">
-          <div class="section-title" style="margin-bottom:0;padding-bottom:0;border-bottom:none">Participantes</div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="section-title" style="margin-bottom:0;padding-bottom:0;border-bottom:none">Participantes</div>
+            <span id="part-ts" style="display:none;font-size:11px;color:var(--muted)"></span>
+          </div>
           <div class="toolbar-actions">
             <input type="text" id="buscar-admin" placeholder="&#128269; Buscar..." oninput="window.buscarParticipante()" style="width:150px;font-size:14px;padding:9px 13px;border-radius:8px">
             <button class="btn-outline" onclick="window.abrirImport()">&#128203; Importar</button>
@@ -332,6 +335,7 @@ let importParsed = [];
 let busquedaAdmin = '';
 let renderCache = [];
 let deleteTargetId = null;
+let autoRefreshTimer = null;
 
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
@@ -629,6 +633,7 @@ window.recargarParticipantes = async function(force){
   }, force);
   participantesCache = data||[];
   if(offline) document.getElementById('offline-p').classList.add('show');
+  actualizarTimestampAdmin();
   renderParticipantes(participantesCache);
 };
 
@@ -669,18 +674,20 @@ function renderParticipantes(lista){
     const completada=p.fichaCompletada===true||String(p.fichaCompletada).toUpperCase()==='TRUE';
     const colegioTag=p.colegio?` <span style="font-size:11px;font-weight:400;color:var(--muted)">&middot; ${esc(p.colegio)}</span>`:'';
     const linkShort=link.length>72?link.substring(0,69)+'…':link;
+    const acciones=completada
+      ? `<button class="btn-sm btn-ficha-sm" onclick="window.verFichaAdmin('${p.id}')">&#128203; Ver ficha</button>`
+      : `<button class="btn-sm btn-copy-sm" onclick="window.copiarLink('${link.replace(/'/g,"\\'")}',this)">Link</button>
+         <button class="btn-sm btn-wa-sm" onclick="window.enviarWhatsApp(${idx})">WhatsApp</button>`;
     return `<div class="participant">
       <div class="part-dot ${completada?'ok':'pend'}"></div>
       <div class="part-info">
         <div class="part-name">${esc(p.nombre)}${colegioTag}</div>
         ${p.contacto?`<div class="part-contact">${esc(p.contacto)}</div>`:''}
-        <span class="part-link" title="${link}">${linkShort}</span>
+        ${!completada?`<span class="part-link" title="${link}">${linkShort}</span>`:''}
       </div>
       <span class="part-badge ${completada?'pb-ok':'pb-pend'}">${completada?'&#10003; Completa':'Pendiente'}</span>
       <div class="part-actions">
-        ${completada?`<button class="btn-sm btn-ficha-sm" onclick="window.verFichaAdmin('${p.id}')">Ficha</button>`:''}
-        <button class="btn-sm btn-copy-sm" onclick="window.copiarLink('${link.replace(/'/g,"\\'")}',this)">Link</button>
-        <button class="btn-sm btn-wa-sm" onclick="window.enviarWhatsApp(${idx})">WhatsApp</button>
+        ${acciones}
         <button class="btn-sm btn-del-sm" onclick="window.eliminarParticipante('${p.id}')" style="margin-left:4px">&#10005;</button>
       </div>
     </div>`;
@@ -747,6 +754,21 @@ function mostrarAlerta(id,msg,tipo){
   setTimeout(()=>{el.style.display='none';},3500);
 }
 
+function actualizarTimestampAdmin(){
+  const el=document.getElementById('part-ts');
+  if(!el) return;
+  const n=new Date();
+  el.textContent='Act. '+String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+  el.style.display='inline';
+}
+
+function iniciarAutoRefresh(){
+  if(autoRefreshTimer) clearInterval(autoRefreshTimer);
+  autoRefreshTimer=setInterval(()=>{
+    if(!document.hidden&&viajeActual) window.recargarParticipantes(true);
+  }, CACHE_TTL);
+}
+
 function cargarViaje(id){
   const lista=getViajes();
   viajeActual=lista.find(v=>v.id===id)||null;
@@ -756,6 +778,7 @@ function cargarViaje(id){
   busquedaAdmin='';
   const buscarEl=document.getElementById('buscar-admin');
   if(buscarEl) buscarEl.value='';
+  iniciarAutoRefresh();
   window.recargarParticipantes(false);
 }
 
