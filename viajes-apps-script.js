@@ -60,6 +60,7 @@ function doGet(e) {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     let result;
     switch (p.tipo) {
+      case 'get_all_viajes':    result = getAllViajes(ss);                            break;
       case 'get_viaje':        result = getViaje(ss, p.id);                          break;
       case 'get_participantes': result = getParticipantes(ss, p.viajeId);            break;
       case 'get_participante':  result = getParticipante(ss, p.viajeId, p.participanteId); break;
@@ -205,6 +206,13 @@ function registrarAtencion(ss, data) {
   });
   sheet.appendRow(row);
   return { ok: true };
+}
+
+// ─── Lectura: get_all_viajes ──────────────────────────────────────────
+function getAllViajes(ss) {
+  const sheet = ss.getSheetByName('Viajes');
+  if (!sheet) return { ok: true, viajes: [] };
+  return { ok: true, viajes: sheetToObjects(sheet) };
 }
 
 // ─── Lectura: get_viaje ───────────────────────────────────────────────

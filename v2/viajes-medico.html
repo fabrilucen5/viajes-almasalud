@@ -531,18 +531,29 @@ window.selectViaje = function(id, el){
   el.classList.add('active');
 };
 
-function renderModalViajes(){
-  const lista=lsJson(VIAJES_KEY)||[];
+async function renderModalViajes(){
   const el=document.getElementById('modal-viajes-lista');
+  if(!el) return;
+  el.innerHTML='<div class="loading-wrap"><div class="spinner"></div>Buscando viajes...</div>';
+  let lista=lsJson(VIAJES_KEY)||[];
+  try{
+    const r=await sheetGet({tipo:'get_all_viajes'});
+    if(r.ok&&r.viajes&&r.viajes.length){
+      const sheetsIds=new Set(r.viajes.map(v=>String(v.id)));
+      const soloLocal=lista.filter(v=>!sheetsIds.has(String(v.id)));
+      lista=[...r.viajes,...soloLocal];
+      lsSet(VIAJES_KEY,JSON.stringify(lista));
+    }
+  }catch(e){}
   if(!lista.length){
-    el.innerHTML='<div class="empty">No hay viajes en este dispositivo.<br><small>El panel admin (viajes-admin.html) debe estar configurado en el mismo navegador, o carg&aacute; datos desde Sheets.</small></div>';
+    el.innerHTML='<div class="empty">No se encontraron viajes.<br><small>Veric&aacute; que al menos un viaje est&eacute; creado desde el panel admin.</small></div>';
     selectedId=null;
     return;
   }
   el.innerHTML=lista.map(v=>`
     <div class="viaje-item${selectedId===v.id?' active':''}" onclick="window.selectViaje('${v.id}',this)">
       <div class="viaje-item-name">${esc(v.nombre)}</div>
-      <div class="viaje-item-sub">${esc(v.organizadora)} &middot; ${v.fechaCreacion}</div>
+      <div class="viaje-item-sub">${esc(v.organizadora||'')} &middot; ${v.fechaCreacion||''}</div>
     </div>`).join('');
 }
 
@@ -694,21 +705,19 @@ function renderFichas(lista){
     const obraStr=fd.obraSocial?(esc(fd.obraSocial)+(fd.numAfiliado?' (N&deg;'+esc(fd.numAfiliado)+')':'')):'&mdash;';
     const tutorStr=fd.tutorNombre?(esc(fd.tutorNombre)+' &mdash; '+esc(fd.tutorTel)):'';
     // Build alert items for banner
-    const alertItems=[];
-    if(tieneAlergia) alertItems.push('&#9888; ALERGIA: '+esc(fd.alergias));
-    if(tieneMed)     alertItems.push('MEDICACI&Oacute;N: '+esc(fd.medicacion));
-    if(tieneEnf)     alertItems.push('ANT.: '+esc(fd.enfermedadesCronicas));
-    const bannerHtml=completada&&alertItems.length
-      ?('<div style="background:var(--red);color:#fff;border-radius:7px;padding:9px 12px;font-size:12px;font-weight:700;margin-top:8px;line-height:1.6">'
-        +alertItems.join(' &nbsp;&middot;&nbsp; ')+'</div>')
-      :completada
-        ?('<div style="background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);border-radius:7px;padding:7px 12px;font-size:12px;font-weight:600;margin-top:8px">&#10003; Sin alertas m&eacute;dicas</div>')
-        :'';
+    // Badges separados por tipo (B7 actualizado)
+    const mt='style="margin-top:6px"';
+    const alertBadges=completada?(
+        (tieneAlergia?'<span class="badge b-alerta" '+mt+'>&#9888; ALERGIA: '+esc(fd.alergias)+'</span>':'')
+       +(tieneMed?'<span class="badge b-med" '+mt+'>&#128138; MEDICACI&Oacute;N: '+esc(fd.medicacion)+'</span>':'')
+       +(tieneEnf?'<span class="badge b-info" '+mt+'>ANT.: '+esc(fd.enfermedadesCronicas)+'</span>':'')
+       +(!tieneAlergia&&!tieneMed&&!tieneEnf?'<span class="badge" '+mt+' style="background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)">&#10003; Sin alertas</span>':'')
+    ):'';
     const badgesHtml='<div class="ficha-badges">'
-      +bannerHtml
-      +(derPrev?'<span class="badge b-der" style="margin-top:6px">'+derPrev+' derivaci&oacute;n(es)</span>':'')
-      +(fd.grupoSanguineo?'<span class="badge b-info" style="margin-top:6px">'+esc(fd.grupoSanguineo)+'</span>':'')
-      +(colegioStr?'<span class="badge" style="background:#f0f4ff;color:#003D6B;border:1px solid #c5d5f0;margin-top:6px">&#127979; '+colegioStr+'</span>':'')
+      +alertBadges
+      +(derPrev?'<span class="badge b-der" '+mt+'>'+derPrev+' derivaci&oacute;n(es)</span>':'')
+      +(fd.grupoSanguineo?'<span class="badge b-info" '+mt+'>'+esc(fd.grupoSanguineo)+'</span>':'')
+      +(colegioStr?'<span class="badge" '+mt+' style="background:#f0f4ff;color:#003D6B;border:1px solid #c5d5f0">&#127979; '+colegioStr+'</span>':'')
       +'</div>';
     const expandHtml=completada?('<div class="ficha-expand" id="fe-'+i+'">'
       +fr('Colegio',fd.colegio)
