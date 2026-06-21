@@ -401,7 +401,15 @@ function renderForm(nombrePart, nombreViaje){
 // ── Init ──────────────────────────────────────────────────────
 async function init(){
   if(!VIAJE_ID||!PART_ID){
-    mostrarError('Este link no es v&aacute;lido. Pedile a la organizadora del viaje que te reenv&iacute;e tu link personal.');
+    document.getElementById('app-body').innerHTML=`
+      <div class="card confirmado-card">
+        <div class="confirmado-icon">&#128203;</div>
+        <div class="confirmado-title">Esta p&aacute;gina es tu ficha m&eacute;dica personal</div>
+        <div class="confirmado-sub">
+          El link para acceder es <strong>individual</strong> y te lo env&iacute;a la organizadora de tu viaje por WhatsApp.<br><br>
+          Si no lo recibiste, contact&aacute; a la organizadora para que te lo reenv&iacute;e.
+        </div>
+      </div>`;
     return;
   }
 

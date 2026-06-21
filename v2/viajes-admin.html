@@ -560,12 +560,22 @@ window.verFichaAdmin = function(partId){
   document.getElementById('modal-ficha-admin').classList.add('show');
 };
 
+function extraerTelefono(contacto){
+  if(!contacto||contacto.includes('@')) return '';
+  const limpio=contacto.replace(/[^\d+]/g,'');
+  return limpio.length>=7?limpio.replace(/^\+/,''):'';
+}
+
 window.enviarWhatsApp = function(idx){
   const p = renderCache[idx];
   if(!p||!viajeActual) return;
   const link = generarLink(viajeActual.id, p.id, viajeActual.nombre, p.nombre);
   const text = 'Hola '+p.nombre+'!\n\nTe enviamos el link para completar tu ficha médica del viaje:\n'+link+'\n\nEs importante que la completes antes del viaje. ¡Gracias!';
-  window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');
+  const tel = extraerTelefono(p.contacto);
+  const waUrl = tel
+    ? 'https://wa.me/'+tel+'?text='+encodeURIComponent(text)
+    : 'https://wa.me/?text='+encodeURIComponent(text);
+  window.open(waUrl,'_blank');
 };
 
 window.copiarLink = function(link, btn){
