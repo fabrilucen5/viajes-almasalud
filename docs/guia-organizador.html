@@ -235,31 +235,34 @@ code{font-family:monospace;background:#f0f4ff;padding:2px 6px;border-radius:4px;
 
   <div class="section" id="s7">
     <div class="section-num">Sección 7</div>
-    <div class="section-title">La planilla de Google Sheets</div>
-    <p>Toda la información del sistema se almacena en una planilla de Google Sheets. Es la fuente de verdad central que comparte datos entre el panel del organizador, las fichas de los participantes y el panel del médico.</p>
+    <div class="section-title">El backend del sistema</div>
+    <p>Toda la información que se registra a través de los paneles (fichas, participantes, atenciones) se almacena de forma segura en la infraestructura de <strong>Alma Salud</strong>. Como organizador, no necesitás acceder ni gestionar ninguna base de datos — eso corre por cuenta nuestra.</p>
 
+    <div class="callout callout-info">
+      <div class="callout-title">Responsabilidad de Alma Salud</div>
+      Alma Salud administra y resguarda todos los datos del sistema. Al finalizar el viaje, generamos un <strong>informe médico completo</strong> con el resumen de participantes, fichas y atenciones, que te entregamos como parte del servicio.
+    </div>
+
+    <h3>¿Qué información se registra?</h3>
     <div class="sheets-grid">
       <div class="sheet-card">
-        <div class="sheet-card-name">📋 Hoja "Viajes"</div>
-        <div class="sheet-card-desc">Registro de todos los viajes creados con su ID, nombre y organizadora.</div>
+        <div class="sheet-card-name">📋 Datos del viaje</div>
+        <div class="sheet-card-desc">Nombre del viaje, fechas y organizadora responsable.</div>
       </div>
       <div class="sheet-card">
-        <div class="sheet-card-name">👥 Hoja "Participantes"</div>
-        <div class="sheet-card-desc">Lista de participantes con todos los datos de sus fichas médicas.</div>
+        <div class="sheet-card-name">👥 Fichas médicas</div>
+        <div class="sheet-card-desc">Datos de salud de cada participante: alergias, medicación, grupo sanguíneo, contactos de emergencia.</div>
       </div>
       <div class="sheet-card">
-        <div class="sheet-card-name">🩺 Hoja "Atenciones"</div>
-        <div class="sheet-card-desc">Registro de cada atención médica durante el viaje: motivo, diagnóstico, derivación, etc.</div>
+        <div class="sheet-card-name">🩺 Atenciones</div>
+        <div class="sheet-card-desc">Registro completo de cada atención médica del viaje: motivo, diagnóstico, tratamiento y derivaciones.</div>
       </div>
     </div>
 
-    <div class="callout callout-warn">
-      <div class="callout-title">No modifiques la planilla manualmente</div>
-      Editarla a mano puede generar inconsistencias con los paneles. Toda la gestión debe hacerse desde las interfaces web.
+    <div class="callout callout-tip">
+      <div class="callout-title">Informe final</div>
+      Al concluir el viaje, Alma Salud te entrega un informe de resumen con estadísticas de atenciones, derivaciones y estado de fichas. Es útil como cierre institucional y como documentación del servicio médico brindado.
     </div>
-
-    <h3>¿Cómo acceder a la planilla?</h3>
-    <p>La planilla es la misma que tiene el código Apps Script del sistema. La URL te la da Alma Salud durante la configuración inicial.</p>
   </div>
 
 </div>
