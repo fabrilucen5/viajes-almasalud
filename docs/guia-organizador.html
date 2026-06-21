@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía del Organizador — Alma Salud Viajes</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#003D6B;--blue:#00508C;--gold:#F5A623;
+  --red:#DC2626;--red-bg:#FEF2F2;--red-border:#FCA5A5;
+  --green:#16A34A;--green-bg:#F0FDF4;--green-border:#86EFAC;
+  --amber-bg:#FFF8E7;--amber:#D97706;--amber-border:#F5A623;
+  --border:#dde3f0;--text:#1A1A1A;--muted:#6b7494;--bg:#F7F9FC;
+}
+body{font-family:'Poppins','Segoe UI',sans-serif;color:var(--text);font-size:15px;background:#eef2f7;line-height:1.6}
+.page{max-width:760px;margin:0 auto;background:#fff;min-height:100vh;box-shadow:0 0 40px rgba(0,0,0,.08)}
+
+.doc-header{background:var(--navy);padding:32px 36px;border-bottom:4px solid var(--gold)}
+.doc-logo{height:56px;margin-bottom:16px}
+.doc-tag{font-size:11px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px}
+.doc-title{font-size:28px;font-weight:700;color:#fff;margin-bottom:6px}
+.doc-sub{font-size:14px;color:rgba(255,255,255,.65)}
+
+.toc{background:var(--bg);border-bottom:1px solid var(--border);padding:24px 36px}
+.toc-title{font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.toc-list{list-style:none;display:flex;flex-direction:column;gap:6px}
+.toc-list a{font-size:13px;color:var(--blue);text-decoration:none;font-weight:500}
+.toc-list a:hover{text-decoration:underline}
+.toc-num{color:var(--muted);margin-right:6px;font-weight:400}
+
+.doc-body{padding:36px}
+.section{margin-bottom:40px}
+.section-num{font-size:11px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px}
+.section-title{font-size:20px;font-weight:700;color:var(--navy);margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--gold)}
+h3{font-size:15px;font-weight:700;color:var(--navy);margin:20px 0 10px}
+p{margin-bottom:12px;color:#333;font-size:14px}
+ul,ol{padding-left:20px;margin-bottom:12px}
+li{font-size:14px;margin-bottom:6px;color:#333}
+strong{color:var(--navy)}
+code{font-family:monospace;background:#f0f4ff;padding:2px 6px;border-radius:4px;font-size:13px;color:var(--navy)}
+
+.callout{border-radius:10px;padding:14px 18px;margin:16px 0;font-size:13px}
+.callout-info{background:#e8edf8;border-left:4px solid var(--navy)}
+.callout-tip{background:var(--green-bg);border-left:4px solid var(--green)}
+.callout-warn{background:var(--amber-bg);border-left:4px solid var(--amber)}
+.callout-err{background:var(--red-bg);border-left:4px solid var(--red)}
+.callout-title{font-weight:700;margin-bottom:4px;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+.callout-info .callout-title{color:var(--navy)}
+.callout-tip .callout-title{color:var(--green)}
+.callout-warn .callout-title{color:var(--amber)}
+.callout-err .callout-title{color:var(--red)}
+
+.steps{list-style:none;padding-left:0;margin-bottom:16px}
+.steps li{display:flex;gap:14px;margin-bottom:14px;align-items:flex-start}
+.step-num{background:var(--navy);color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
+.step-text{flex:1;font-size:14px}
+
+/* CSV example */
+.csv-example{background:#1e1e2e;border-radius:9px;padding:16px 18px;font-family:monospace;font-size:13px;color:#cdd6f4;margin:12px 0;overflow-x:auto}
+.csv-example .header-row{color:var(--gold);font-weight:600}
+.csv-example .data-row{color:#a6e3a1}
+
+/* State pills */
+.pill{font-size:12px;padding:3px 10px;border-radius:12px;font-weight:600;display:inline-block;margin:2px}
+.pill-ok{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+.pill-pend{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-border)}
+
+/* Button demo */
+.btn-demo{display:inline-block;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;margin:4px}
+.btn-wa{background:#25D366;color:#fff}
+.btn-link{background:#fff;color:var(--navy);border:1.5px solid var(--navy)}
+.btn-ficha{background:var(--bg);color:var(--navy);border:1.5px solid var(--border)}
+.btn-medico{background:var(--gold);color:var(--navy)}
+
+/* Sheets table */
+.sheets-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}
+.sheet-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px;border-top:3px solid var(--navy)}
+.sheet-card-name{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:6px}
+.sheet-card-desc{font-size:12px;color:var(--muted)}
+
+.doc-footer{background:var(--bg);border-top:2px solid var(--border);padding:20px 36px;text-align:center;font-size:12px;color:var(--muted)}
+@media(max-width:600px){
+  .doc-header,.doc-body,.toc{padding-left:20px;padding-right:20px}
+  .doc-title{font-size:22px}
+  .sheets-grid{grid-template-columns:1fr}
+}
+@media print{
+  body{background:#fff}.page{box-shadow:none;max-width:100%}
+  .section{page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="doc-header">
+  <img class="doc-logo" src="https://raw.githubusercontent.com/fabrilucen5/imagenesalmasalud/main/Alma%20Salud%20-%20Logo%202.png" alt="Alma Salud" onerror="this.style.display='none'">
+  <div class="doc-tag">Documentación del sistema</div>
+  <div class="doc-title">Guía del Organizador</div>
+  <div class="doc-sub">Panel de administración para viajes de egresados &mdash; Alma Salud</div>
+</div>
+
+<div class="toc">
+  <div class="toc-title">Contenido</div>
+  <ul class="toc-list">
+    <li><a href="#s1"><span class="toc-num">1.</span> ¿Qué es el panel de administración?</a></li>
+    <li><a href="#s2"><span class="toc-num">2.</span> Crear un viaje</a></li>
+    <li><a href="#s3"><span class="toc-num">3.</span> Importar participantes</a></li>
+    <li><a href="#s4"><span class="toc-num">4.</span> Enviar fichas médicas a los participantes</a></li>
+    <li><a href="#s5"><span class="toc-num">5.</span> Monitorear el estado de las fichas</a></li>
+    <li><a href="#s6"><span class="toc-num">6.</span> Compartir el panel con el médico</a></li>
+    <li><a href="#s7"><span class="toc-num">7.</span> La planilla de Google Sheets</a></li>
+  </ul>
+</div>
+
+<div class="doc-body">
+
+  <div class="section" id="s1">
+    <div class="section-num">Sección 1</div>
+    <div class="section-title">¿Qué es el panel de administración?</div>
+    <p>El <strong>panel de administración</strong> es la herramienta con la que vos, como organizadora, gestionás todo el proceso de fichas médicas del viaje. Desde acá creás el viaje, importás a todos los participantes, les enviás sus links personalizados de ficha y hacés seguimiento de quién completó y quién no.</p>
+    <p>Es una aplicación web — se abre en cualquier navegador, sin instalación.</p>
+    <div class="callout callout-info">
+      <div class="callout-title">Flujo general</div>
+      Crear viaje → Importar participantes → Enviar links por WhatsApp → Esperar que completen → Compartir con el médico
+    </div>
+  </div>
+
+  <div class="section" id="s2">
+    <div class="section-num">Sección 2</div>
+    <div class="section-title">Crear un viaje</div>
+    <p>Al abrir el panel por primera vez, aparece el formulario de creación de viaje.</p>
+    <ol class="steps">
+      <li><span class="step-num">1</span><span class="step-text">Ingresá el <strong>nombre del viaje</strong> (ej: "Viaje Bariloche 2025 — San Martín").</span></li>
+      <li><span class="step-num">2</span><span class="step-text">Ingresá el <strong>nombre de la organizadora</strong> (ej: "Alma Salud — Lucía Fernández").</span></li>
+      <li><span class="step-num">3</span><span class="step-text">Hacé clic en <strong>Crear viaje</strong>. Se genera un ID único y se guarda en la planilla.</span></li>
+    </ol>
+    <div class="callout callout-tip">
+      <div class="callout-title">Tip</div>
+      Podés manejar múltiples viajes desde el mismo panel. Usá el selector en la esquina superior derecha para cambiar entre ellos.
+    </div>
+  </div>
+
+  <div class="section" id="s3">
+    <div class="section-num">Sección 3</div>
+    <div class="section-title">Importar participantes</div>
+    <p>Podés agregar participantes de dos formas:</p>
+
+    <h3>Opción A: Importar desde CSV (recomendado para grupos grandes)</h3>
+    <p>Preparás un archivo CSV con los datos de todos los participantes y lo importás de una sola vez.</p>
+    <p>El archivo debe tener esta estructura (la primera fila es el encabezado):</p>
+    <div class="csv-example">
+      <div class="header-row">nombre,contacto,colegio</div>
+      <div class="data-row">Juan Pérez,+5491123456789,Colegio Nacional</div>
+      <div class="data-row">María García,+5491187654321,Colegio San José</div>
+      <div class="data-row">Lucas Rodríguez,lucas@email.com,Colegio Nacional</div>
+    </div>
+    <ul>
+      <li><strong>nombre</strong>: nombre completo del participante (obligatorio).</li>
+      <li><strong>contacto</strong>: número de WhatsApp con código de país (ej: <code>+5491123456789</code>) o email. Si tenés el número, preferí usarlo — el botón WhatsApp lo usa para abrir el chat directo.</li>
+      <li><strong>colegio</strong>: nombre del colegio (opcional, pero útil para filtrar en el panel médico).</li>
+    </ul>
+    <div class="callout callout-warn">
+      <div class="callout-title">Formato del número de teléfono</div>
+      Incluí el código de país sin guiones ni espacios. Para Argentina: <code>+5491123456789</code> (54 = Argentina, 9 = celular, 11 = área, + 8 dígitos del número).
+    </div>
+
+    <ol class="steps">
+      <li><span class="step-num">1</span><span class="step-text">Hacé clic en <strong>Importar CSV</strong>.</span></li>
+      <li><span class="step-num">2</span><span class="step-text">Seleccioná el archivo desde tu computadora.</span></li>
+      <li><span class="step-num">3</span><span class="step-text">El panel muestra una preview de los datos. Revisá que estén bien.</span></li>
+      <li><span class="step-num">4</span><span class="step-text">Hacé clic en <strong>Confirmar importación</strong>. Todos los participantes se agregan a la planilla.</span></li>
+    </ol>
+
+    <h3>Opción B: Agregar uno por uno</h3>
+    <p>Usá el formulario manual para agregar participantes de a uno. Útil para agregar alguien que se sumó al viaje tarde.</p>
+  </div>
+
+  <div class="section" id="s4">
+    <div class="section-num">Sección 4</div>
+    <div class="section-title">Enviar fichas médicas a los participantes</div>
+    <p>Cada participante recibe un link único e individual para completar su ficha médica. El link incluye automáticamente su nombre y el ID del viaje, así no tiene que ingresar nada.</p>
+    <p>Para cada participante hay dos opciones:</p>
+    <div style="margin:12px 0">
+      <span class="btn-demo btn-wa">WhatsApp</span>
+      <span class="btn-demo btn-link">Link</span>
+    </div>
+    <ul>
+      <li><strong>WhatsApp</strong>: abre directamente el chat de WhatsApp con ese participante (si tenés su número) con el mensaje ya escrito. Solo tenés que tocar Enviar.</li>
+      <li><strong>Link</strong>: copia el link al portapapeles para que lo pegues en cualquier canal (WhatsApp, email, grupo, etc.).</li>
+    </ul>
+    <div class="callout callout-tip">
+      <div class="callout-title">Tip — envío masivo</div>
+      Para grupos grandes, podés copiar el link de cada participante y pegarlo en una comunicación grupal, o usar el botón WhatsApp para ir uno por uno. Lo importante es que cada participante reciba <strong>su link personal</strong>, no el mismo link para todos.
+    </div>
+    <div class="callout callout-info">
+      <div class="callout-title">¿Qué ve el participante?</div>
+      Al abrir el link, ve un formulario con su nombre ya cargado. Completa sus datos médicos y toca Enviar. La información llega directo a la planilla.
+    </div>
+  </div>
+
+  <div class="section" id="s5">
+    <div class="section-num">Sección 5</div>
+    <div class="section-title">Monitorear el estado de las fichas</div>
+    <p>La lista de participantes muestra en tiempo real quién completó su ficha:</p>
+    <ul>
+      <li><span class="pill pill-ok">✓ Completa</span> — el participante ya completó la ficha médica.</li>
+      <li><span class="pill pill-pend">Sin ficha</span> — todavía no completó el formulario.</li>
+    </ul>
+    <p>Cuando un participante completa la ficha, el estado se actualiza automáticamente en el panel (la actualización puede demorar hasta 5 minutos, o podés tocar el botón ↺ para actualizar manualmente).</p>
+
+    <h3>Ver la ficha de un participante</h3>
+    <p>Una vez que el participante completó su ficha, el botón <strong>📋 Ver ficha</strong> reemplaza al botón WhatsApp. Tocándolo podés revisar toda la información que ingresó: grupo sanguíneo, alergias, medicación, contacto de emergencia, etc.</p>
+
+    <h3>Eliminar un participante</h3>
+    <p>Si alguien ya no va al viaje, podés eliminarlo con el botón 🗑. El sistema pide confirmación antes de borrar. El participante se elimina también de la planilla de Sheets.</p>
+  </div>
+
+  <div class="section" id="s6">
+    <div class="section-num">Sección 6</div>
+    <div class="section-title">Compartir el panel con el médico</div>
+    <p>Una vez que llegó el momento del viaje, tenés que darle acceso al médico al panel médico.</p>
+    <ol class="steps">
+      <li><span class="step-num">1</span><span class="step-text">En el panel admin, buscá el botón <span class="btn-demo btn-medico" style="padding:4px 10px;font-size:11px">Panel Médico</span> (aparece en la barra de acciones del viaje).</span></li>
+      <li><span class="step-num">2</span><span class="step-text">Tocás el botón y se copia el link del panel médico con el ID del viaje incluido.</span></li>
+      <li><span class="step-num">3</span><span class="step-text">Enviá ese link al médico por WhatsApp o email. Al abrirlo, el viaje carga automáticamente sin que tenga que buscar el ID.</span></li>
+    </ol>
+    <div class="callout callout-info">
+      <div class="callout-title">Acceso del médico</div>
+      El médico no necesita clave ni cuenta. Solo necesita el link y su nombre/matrícula (que se guarda en su dispositivo la primera vez).
+    </div>
+  </div>
+
+  <div class="section" id="s7">
+    <div class="section-num">Sección 7</div>
+    <div class="section-title">La planilla de Google Sheets</div>
+    <p>Toda la información del sistema se almacena en una planilla de Google Sheets. Es la fuente de verdad central que comparte datos entre el panel del organizador, las fichas de los participantes y el panel del médico.</p>
+
+    <div class="sheets-grid">
+      <div class="sheet-card">
+        <div class="sheet-card-name">📋 Hoja "Viajes"</div>
+        <div class="sheet-card-desc">Registro de todos los viajes creados con su ID, nombre y organizadora.</div>
+      </div>
+      <div class="sheet-card">
+        <div class="sheet-card-name">👥 Hoja "Participantes"</div>
+        <div class="sheet-card-desc">Lista de participantes con todos los datos de sus fichas médicas.</div>
+      </div>
+      <div class="sheet-card">
+        <div class="sheet-card-name">🩺 Hoja "Atenciones"</div>
+        <div class="sheet-card-desc">Registro de cada atención médica durante el viaje: motivo, diagnóstico, derivación, etc.</div>
+      </div>
+    </div>
+
+    <div class="callout callout-warn">
+      <div class="callout-title">No modifiques la planilla manualmente</div>
+      Editarla a mano puede generar inconsistencias con los paneles. Toda la gestión debe hacerse desde las interfaces web.
+    </div>
+
+    <h3>¿Cómo acceder a la planilla?</h3>
+    <p>La planilla es la misma que tiene el código Apps Script del sistema. La URL te la da Alma Salud durante la configuración inicial.</p>
+  </div>
+
+</div>
+
+<div class="doc-footer">
+  Alma Salud &mdash; Sistema de gestión médica para viajes de egresados &mdash; Documento confidencial
+</div>
+
+</div>
+</body>
+</html>

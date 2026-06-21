@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema de Gestión Médica — Alma Salud</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#003D6B;--blue:#00508C;--gold:#F5A623;--gold2:#E09612;
+  --red:#DC2626;--red-bg:#FEF2F2;
+  --green:#16A34A;--green-bg:#F0FDF4;--green-border:#86EFAC;
+  --border:#dde3f0;--text:#1A1A1A;--muted:#6b7494;--bg:#F7F9FC;
+}
+body{font-family:'Poppins','Segoe UI',sans-serif;color:var(--text);font-size:15px;background:#eef2f7;line-height:1.6}
+.page{max-width:800px;margin:0 auto;background:#fff;min-height:100vh;box-shadow:0 0 40px rgba(0,0,0,.1)}
+
+/* ── PORTADA ── */
+.cover{background:var(--navy);padding:56px 48px;text-align:center;position:relative;overflow:hidden;border-bottom:5px solid var(--gold)}
+.cover::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%, rgba(0,80,140,.6) 0%, transparent 60%);pointer-events:none}
+.cover-logo{height:70px;margin:0 auto 28px;display:block;position:relative;z-index:1}
+.cover-eyebrow{font-size:11px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:3px;margin-bottom:12px;position:relative;z-index:1}
+.cover-title{font-size:36px;font-weight:800;color:#fff;line-height:1.2;margin-bottom:14px;position:relative;z-index:1}
+.cover-title span{color:var(--gold)}
+.cover-sub{font-size:16px;color:rgba(255,255,255,.7);max-width:500px;margin:0 auto 32px;position:relative;z-index:1}
+.cover-chips{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1}
+.chip{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:6px 16px;font-size:12px;color:rgba(255,255,255,.85);font-weight:500}
+
+/* ── SECTIONS ── */
+.doc-body{padding:48px}
+.section{margin-bottom:52px}
+.section-label{font-size:10px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px}
+.section-title{font-size:24px;font-weight:700;color:var(--navy);margin-bottom:6px}
+.section-sub{font-size:14px;color:var(--muted);margin-bottom:24px}
+.divider{height:3px;width:50px;background:var(--gold);margin-bottom:24px;border-radius:2px}
+p{margin-bottom:12px;color:#333;font-size:14px;line-height:1.7}
+strong{color:var(--navy)}
+
+/* ── PROBLEMA / SOLUCIÓN ── */
+.problem-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}
+.p-card{padding:18px;border-radius:12px}
+.p-card-before{background:var(--red-bg);border:1px solid #FCA5A5}
+.p-card-after{background:var(--green-bg);border:1px solid var(--green-border)}
+.p-card-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+.p-card-before .p-card-label{color:var(--red)}
+.p-card-after .p-card-label{color:var(--green)}
+.p-card ul{padding-left:16px}
+.p-card li{font-size:13px;margin-bottom:5px;color:#333}
+
+/* ── MÓDULOS ── */
+.modules{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:24px 0}
+.module{border:1.5px solid var(--border);border-radius:14px;padding:20px;text-align:center;border-top:4px solid var(--navy)}
+.module.m-gold{border-top-color:var(--gold)}
+.module.m-green{border-top-color:var(--green)}
+.module-icon{font-size:32px;margin-bottom:10px}
+.module-name{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:6px}
+.module-user{font-size:11px;color:var(--gold);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.module-desc{font-size:12px;color:var(--muted);line-height:1.6}
+
+/* ── FLUJO ── */
+.flow{margin:24px 0}
+.flow-step{display:flex;gap:18px;margin-bottom:20px;align-items:flex-start}
+.flow-left{display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:40px}
+.flow-num{background:var(--navy);color:#fff;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+.flow-line{width:2px;background:var(--border);flex:1;min-height:20px;margin-top:4px}
+.flow-step:last-child .flow-line{display:none}
+.flow-content{flex:1;padding-top:4px}
+.flow-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:4px}
+.flow-desc{font-size:13px;color:#555;line-height:1.6}
+.flow-who{font-size:11px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+
+/* ── FEATURES ── */
+.features{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0}
+.feature{background:var(--bg);border-radius:10px;padding:16px 18px;display:flex;gap:12px}
+.feature-icon{font-size:22px;flex-shrink:0}
+.feature-title{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:3px}
+.feature-desc{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* ── BENEFICIOS ── */
+.benefits{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:20px 0}
+.benefit{background:var(--navy);border-radius:12px;padding:18px;text-align:center}
+.benefit-num{font-size:32px;font-weight:800;color:var(--gold);margin-bottom:4px}
+.benefit-label{font-size:12px;color:rgba(255,255,255,.75);line-height:1.4}
+
+/* ── HOW TO START ── */
+.start-steps{counter-reset:steps}
+.start-step{display:flex;gap:16px;margin-bottom:16px;align-items:flex-start;background:var(--bg);border-radius:10px;padding:16px}
+.start-num{background:var(--gold);color:var(--navy);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.start-text{font-size:14px;color:#333;line-height:1.6}
+
+/* ── CTA ── */
+.cta-box{background:var(--navy);border-radius:14px;padding:32px;text-align:center;margin-top:32px}
+.cta-title{font-size:20px;font-weight:700;color:#fff;margin-bottom:8px}
+.cta-sub{font-size:14px;color:rgba(255,255,255,.7);margin-bottom:20px}
+.cta-contact{background:var(--gold);color:var(--navy);border-radius:9px;padding:12px 28px;font-size:14px;font-weight:700;display:inline-block}
+
+/* ── FOOTER ── */
+.doc-footer{background:var(--bg);border-top:2px solid var(--border);padding:20px 36px;text-align:center;font-size:12px;color:var(--muted)}
+
+@media(max-width:640px){
+  .cover{padding:36px 24px}
+  .cover-title{font-size:26px}
+  .doc-body{padding:28px 20px}
+  .problem-grid,.modules,.features,.benefits{grid-template-columns:1fr}
+  .p-card-before{margin-bottom:0}
+}
+@media print{
+  body{background:#fff}.page{box-shadow:none;max-width:100%}
+  .section{page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- PORTADA -->
+<div class="cover">
+  <img class="cover-logo" src="https://raw.githubusercontent.com/fabrilucen5/imagenesalmasalud/main/Alma%20Salud%20-%20Logo%202.png" alt="Alma Salud" onerror="this.style.display='none'">
+  <div class="cover-eyebrow">Presentación del sistema</div>
+  <div class="cover-title">Gestión médica digital para<br><span>viajes de egresados</span></div>
+  <div class="cover-sub">Una solución integral que conecta organizadores, participantes y médicos en un mismo sistema automatizado.</div>
+  <div class="cover-chips">
+    <span class="chip">📱 Sin instalación</span>
+    <span class="chip">☁️ Datos en la nube</span>
+    <span class="chip">⚡ Tiempo real</span>
+    <span class="chip">🔒 Información centralizada</span>
+  </div>
+</div>
+
+<div class="doc-body">
+
+  <!-- EL PROBLEMA -->
+  <div class="section" id="s1">
+    <div class="section-label">El contexto</div>
+    <div class="section-title">El problema que resuelve</div>
+    <div class="divider"></div>
+    <p>Hoy, la gestión de fichas médicas en viajes de egresados es un proceso manual, disperso y propenso a errores: papeles que se pierden, grupos de WhatsApp desorganizados y médicos que viajan sin información de los participantes.</p>
+    <div class="problem-grid">
+      <div class="p-card p-card-before">
+        <div class="p-card-label">❌ Sin el sistema</div>
+        <ul>
+          <li>Fichas en papel que se pierden o no se completan</li>
+          <li>El médico no tiene información de los participantes</li>
+          <li>Registros de atención escritos a mano, sin respaldo</li>
+          <li>Sin visibilidad de quién completó su ficha</li>
+          <li>Datos dispersos entre mails, fotos y grupos</li>
+        </ul>
+      </div>
+      <div class="p-card p-card-after">
+        <div class="p-card-label">✓ Con el sistema</div>
+        <ul>
+          <li>Fichas digitales con recordatorio por WhatsApp</li>
+          <li>El médico ve las fichas en tiempo real desde su celular</li>
+          <li>Registros de atención guardados en la nube automáticamente</li>
+          <li>Dashboard de estado: quién completó y quién no</li>
+          <li>Todo centralizado en Google Sheets</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOS MÓDULOS -->
+  <div class="section" id="s2">
+    <div class="section-label">La solución</div>
+    <div class="section-title">Tres módulos interconectados</div>
+    <div class="divider"></div>
+    <p>El sistema está compuesto por tres herramientas web que trabajan juntas a través de una planilla de Google Sheets como base de datos central. Ninguna requiere instalación: funcionan desde el navegador de cualquier celular o computadora.</p>
+    <div class="modules">
+      <div class="module">
+        <div class="module-icon">⚙️</div>
+        <div class="module-name">Panel Admin</div>
+        <div class="module-user">Organizador / Alma Salud</div>
+        <div class="module-desc">Crea el viaje, importa los participantes y envía los links de ficha médica por WhatsApp. Monitorea quién completó.</div>
+      </div>
+      <div class="module m-gold">
+        <div class="module-icon">📋</div>
+        <div class="module-name">Ficha Médica</div>
+        <div class="module-user">Cada participante</div>
+        <div class="module-desc">Formulario personal que cada participante completa desde su celular. Se accede por un link único enviado por WhatsApp.</div>
+      </div>
+      <div class="module m-green">
+        <div class="module-icon">🩺</div>
+        <div class="module-name">Panel Médico</div>
+        <div class="module-user">Médico del viaje</div>
+        <div class="module-desc">Ve las fichas de todos los participantes y registra cada atención en tiempo real, con acceso a alertas de alergias y medicación.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLUJO COMPLETO -->
+  <div class="section" id="s3">
+    <div class="section-label">Paso a paso</div>
+    <div class="section-title">El flujo completo del sistema</div>
+    <div class="divider"></div>
+    <div class="flow">
+
+      <div class="flow-step">
+        <div class="flow-left"><div class="flow-num">1</div><div class="flow-line"></div></div>
+        <div class="flow-content">
+          <div class="flow-who">Alma Salud / Organizador</div>
+          <div class="flow-title">Crear el viaje</div>
+          <div class="flow-desc">Se ingresa el nombre del viaje y la organizadora en el panel admin. El sistema genera un ID único y registra el viaje en la planilla de Google Sheets.</div>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-left"><div class="flow-num">2</div><div class="flow-line"></div></div>
+        <div class="flow-content">
+          <div class="flow-who">Alma Salud / Organizador</div>
+          <div class="flow-title">Importar participantes</div>
+          <div class="flow-desc">Se sube un archivo CSV con nombre, número de WhatsApp y colegio de cada participante. El sistema los registra todos de una sola vez.</div>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-left"><div class="flow-num">3</div><div class="flow-line"></div></div>
+        <div class="flow-content">
+          <div class="flow-who">Alma Salud / Organizador</div>
+          <div class="flow-title">Enviar links por WhatsApp</div>
+          <div class="flow-desc">Con un clic por participante, se abre WhatsApp con el mensaje y el link ya escritos. Cada link es único para cada persona y lleva directo a su ficha.</div>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-left"><div class="flow-num">4</div><div class="flow-line"></div></div>
+        <div class="flow-content">
+          <div class="flow-who">Participantes (egresados)</div>
+          <div class="flow-title">Completar la ficha médica</div>
+          <div class="flow-desc">Cada participante abre su link personal desde el celular, completa sus datos médicos (grupo sanguíneo, alergias, medicación, contacto de emergencia, etc.) y envía. Tarda menos de 2 minutos.</div>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-left"><div class="flow-num">5</div><div class="flow-line"></div></div>
+        <div class="flow-content">
+          <div class="flow-who">Alma Salud / Organizador</div>
+          <div class="flow-title">Monitorear y hacer seguimiento</div>
+          <div class="flow-desc">El panel admin muestra en tiempo real quién completó y quién no. Se puede reenviar el link a quienes no completaron con un clic.</div>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-left"><div class="flow-num">6</div><div class="flow-line"></div></div>
+        <div class="flow-content">
+          <div class="flow-who">Médico del viaje</div>
+          <div class="flow-title">Acceder al panel médico</div>
+          <div class="flow-desc">El médico recibe por WhatsApp el link del panel médico. Al abrirlo, ve automáticamente todas las fichas del viaje con alertas destacadas: alergias, medicación crónica y antecedentes.</div>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-left"><div class="flow-num">7</div><div class="flow-line"></div></div>
+        <div class="flow-content">
+          <div class="flow-who">Médico del viaje</div>
+          <div class="flow-title">Registrar atenciones durante el viaje</div>
+          <div class="flow-desc">Cada vez que atiende a un participante, el médico lo registra en el panel: motivo, diagnóstico, tratamiento y si hubo derivación. Todo se guarda automáticamente en la planilla.</div>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-left"><div class="flow-num">8</div><div class="flow-line"></div></div>
+        <div class="flow-content">
+          <div class="flow-who">Alma Salud / Organizador</div>
+          <div class="flow-title">Informe final</div>
+          <div class="flow-desc">Al terminar el viaje, toda la información queda disponible en la planilla de Sheets y se puede exportar como CSV para generar un informe médico completo del viaje.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CARACTERÍSTICAS TÉCNICAS -->
+  <div class="section" id="s4">
+    <div class="section-label">Tecnología</div>
+    <div class="section-title">Características del sistema</div>
+    <div class="divider"></div>
+    <div class="features">
+      <div class="feature">
+        <div class="feature-icon">📱</div>
+        <div>
+          <div class="feature-title">Sin instalación</div>
+          <div class="feature-desc">100% web. Funciona en el navegador de cualquier celular, tablet o computadora. Sin apps que descargar.</div>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">☁️</div>
+        <div>
+          <div class="feature-title">Datos en Google Sheets</div>
+          <div class="feature-desc">La planilla es accesible para el cliente, exportable y editable. No hay dependencia de servidores propios.</div>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔄</div>
+        <div>
+          <div class="feature-title">Sincronización automática</div>
+          <div class="feature-desc">Los paneles se actualizan cada 5 minutos. Si hay conexión intermitente, los datos se guardan localmente y sincronizan solos.</div>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔒</div>
+        <div>
+          <div class="feature-title">Acceso controlado</div>
+          <div class="feature-desc">Cada participante solo puede ver y completar su propia ficha. El médico y el organizador acceden desde links distintos.</div>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">⚡</div>
+        <div>
+          <div class="feature-title">Alertas automáticas</div>
+          <div class="feature-desc">El panel médico destaca con color las alergias, medicación crónica y antecedentes de cada participante.</div>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📊</div>
+        <div>
+          <div class="feature-title">Exportación CSV</div>
+          <div class="feature-desc">El historial de atenciones se puede descargar en CSV compatible con Excel para informes o auditorías.</div>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🏫</div>
+        <div>
+          <div class="feature-title">Multigrupo</div>
+          <div class="feature-desc">Soporta múltiples colegios en un mismo viaje. Las fichas y atenciones se pueden filtrar por institución.</div>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📶</div>
+        <div>
+          <div class="feature-title">Modo offline</div>
+          <div class="feature-desc">Si la señal es débil, el médico puede seguir consultando fichas y registrando atenciones. Sincroniza al volver la conexión.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BENEFICIOS -->
+  <div class="section" id="s5">
+    <div class="section-label">Impacto</div>
+    <div class="section-title">Beneficios clave</div>
+    <div class="divider"></div>
+    <div class="benefits">
+      <div class="benefit">
+        <div class="benefit-num">0</div>
+        <div class="benefit-label">Papel<br>en todo el proceso</div>
+      </div>
+      <div class="benefit">
+        <div class="benefit-num">2 min</div>
+        <div class="benefit-label">Tiempo que tarda un participante en completar su ficha</div>
+      </div>
+      <div class="benefit">
+        <div class="benefit-num">100%</div>
+        <div class="benefit-label">Información accesible para el médico desde su celular</div>
+      </div>
+    </div>
+    <p>Además de la eficiencia operativa, el sistema eleva significativamente el <strong>estándar de seguridad médica</strong> del viaje: el médico siempre sabe quién tiene alergias, quién toma medicación y cómo contactar a la familia en caso de emergencia.</p>
+  </div>
+
+  <!-- CÓMO EMPEZAR -->
+  <div class="section" id="s6">
+    <div class="section-label">Próximos pasos</div>
+    <div class="section-title">¿Cómo implementarlo?</div>
+    <div class="divider"></div>
+    <p>La implementación es rápida. En menos de una hora el sistema está listo para el primer viaje.</p>
+    <div class="start-step">
+      <div class="start-num">1</div>
+      <div class="start-text"><strong>Configuración inicial</strong>: Alma Salud crea la planilla de Google Sheets y el Apps Script del sistema. Solo se hace una vez.</div>
+    </div>
+    <div class="start-step">
+      <div class="start-num">2</div>
+      <div class="start-text"><strong>Acceso al panel admin</strong>: se comparte el link del panel con el organizador. No requiere cuenta ni contraseña.</div>
+    </div>
+    <div class="start-step">
+      <div class="start-num">3</div>
+      <div class="start-text"><strong>Creación del primer viaje</strong>: el organizador ingresa el nombre del viaje e importa la lista de participantes desde un CSV.</div>
+    </div>
+    <div class="start-step">
+      <div class="start-num">4</div>
+      <div class="start-text"><strong>Envío de fichas</strong>: con un clic por participante, se envía el link por WhatsApp. El sistema funciona solo a partir de ahí.</div>
+    </div>
+
+    <div class="cta-box">
+      <div class="cta-title">¿Te interesa implementar este sistema?</div>
+      <div class="cta-sub">Contactanos para coordinar la configuración inicial y capacitación. En un solo viaje vas a ver la diferencia.</div>
+      <div class="cta-contact">Contactar a Alma Salud</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="doc-footer">
+  Alma Salud &mdash; Sistema de gestión médica para viajes de egresados &mdash; &copy; 2025 &mdash; Documento confidencial
+</div>
+
+</div>
+</body>
+</html>

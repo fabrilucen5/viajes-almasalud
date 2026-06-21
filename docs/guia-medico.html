@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía del Médico — Alma Salud Viajes</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#003D6B;--blue:#00508C;--gold:#F5A623;
+  --red:#DC2626;--red-bg:#FEF2F2;--red-border:#FCA5A5;
+  --green:#16A34A;--green-bg:#F0FDF4;--green-border:#86EFAC;
+  --amber-bg:#FFF8E7;--amber:#D97706;--amber-border:#F5A623;
+  --border:#dde3f0;--text:#1A1A1A;--muted:#6b7494;--bg:#F7F9FC;
+}
+body{font-family:'Poppins','Segoe UI',sans-serif;color:var(--text);font-size:15px;background:#eef2f7;line-height:1.6}
+.page{max-width:760px;margin:0 auto;background:#fff;min-height:100vh;box-shadow:0 0 40px rgba(0,0,0,.08)}
+
+/* Header */
+.doc-header{background:var(--navy);padding:32px 36px;border-bottom:4px solid var(--gold)}
+.doc-logo{height:56px;margin-bottom:16px}
+.doc-tag{font-size:11px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px}
+.doc-title{font-size:28px;font-weight:700;color:#fff;margin-bottom:6px}
+.doc-sub{font-size:14px;color:rgba(255,255,255,.65)}
+
+/* TOC */
+.toc{background:var(--bg);border-bottom:1px solid var(--border);padding:24px 36px}
+.toc-title{font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.toc-list{list-style:none;display:flex;flex-direction:column;gap:6px}
+.toc-list a{font-size:13px;color:var(--blue);text-decoration:none;font-weight:500}
+.toc-list a:hover{text-decoration:underline}
+.toc-num{color:var(--muted);margin-right:6px;font-weight:400}
+
+/* Body */
+.doc-body{padding:36px}
+
+/* Sections */
+.section{margin-bottom:40px}
+.section-num{font-size:11px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px}
+.section-title{font-size:20px;font-weight:700;color:var(--navy);margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--gold)}
+h3{font-size:15px;font-weight:700;color:var(--navy);margin:20px 0 10px}
+p{margin-bottom:12px;color:#333;font-size:14px}
+ul,ol{padding-left:20px;margin-bottom:12px}
+li{font-size:14px;margin-bottom:6px;color:#333}
+strong{color:var(--navy)}
+
+/* Callout boxes */
+.callout{border-radius:10px;padding:14px 18px;margin:16px 0;font-size:13px}
+.callout-info{background:#e8edf8;border-left:4px solid var(--navy)}
+.callout-tip{background:var(--green-bg);border-left:4px solid var(--green)}
+.callout-warn{background:var(--red-bg);border-left:4px solid var(--red)}
+.callout-title{font-weight:700;margin-bottom:4px;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+.callout-info .callout-title{color:var(--navy)}
+.callout-tip .callout-title{color:var(--green)}
+.callout-warn .callout-title{color:var(--red)}
+
+/* Step list */
+.steps{list-style:none;padding-left:0;margin-bottom:16px}
+.steps li{display:flex;gap:14px;margin-bottom:14px;align-items:flex-start}
+.step-num{background:var(--navy);color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
+.step-text{flex:1;font-size:14px}
+
+/* Badges demo */
+.badges-demo{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.badge{font-size:12px;padding:4px 12px;border-radius:20px;font-weight:600;display:inline-block}
+.b-rojo{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
+.b-ambar{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-border)}
+.b-azul{background:#e8edf8;color:var(--navy)}
+.b-verde{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+
+/* Tabs demo */
+.tabs-demo{display:flex;background:var(--navy);border-radius:10px 10px 0 0;overflow:hidden;margin:16px 0 0}
+.tab-demo{flex:1;padding:10px;text-align:center;font-size:12px;font-weight:600;color:rgba(255,255,255,.45)}
+.tab-demo.active{color:var(--gold);border-bottom:2px solid var(--gold)}
+.tab-content-demo{background:var(--bg);border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px;padding:16px;margin-bottom:16px;font-size:13px}
+
+/* Field display */
+.field-demo{background:#fff;border:1.5px solid var(--border);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--muted);margin:8px 0}
+
+/* Footer */
+.doc-footer{background:var(--bg);border-top:2px solid var(--border);padding:20px 36px;text-align:center;font-size:12px;color:var(--muted)}
+
+@media(max-width:600px){
+  .doc-header,.doc-body,.toc{padding-left:20px;padding-right:20px}
+  .doc-title{font-size:22px}
+  .tabs-demo{flex-direction:column}
+}
+@media print{
+  body{background:#fff}
+  .page{box-shadow:none;max-width:100%}
+  .section{page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="doc-header">
+  <img class="doc-logo" src="https://raw.githubusercontent.com/fabrilucen5/imagenesalmasalud/main/Alma%20Salud%20-%20Logo%202.png" alt="Alma Salud" onerror="this.style.display='none'">
+  <div class="doc-tag">Documentación del sistema</div>
+  <div class="doc-title">Guía del Médico</div>
+  <div class="doc-sub">Panel médico para viajes de egresados &mdash; Alma Salud</div>
+</div>
+
+<div class="toc">
+  <div class="toc-title">Contenido</div>
+  <ul class="toc-list">
+    <li><a href="#s1"><span class="toc-num">1.</span> ¿Qué es el panel médico?</a></li>
+    <li><a href="#s2"><span class="toc-num">2.</span> Primer acceso e identificación</a></li>
+    <li><a href="#s3"><span class="toc-num">3.</span> Seleccionar el viaje activo</a></li>
+    <li><a href="#s4"><span class="toc-num">4.</span> Pestaña Fichas — ver historial médico</a></li>
+    <li><a href="#s5"><span class="toc-num">5.</span> Pestaña Registro — cargar una atención</a></li>
+    <li><a href="#s6"><span class="toc-num">6.</span> Pestaña Historial — atenciones del viaje</a></li>
+    <li><a href="#s7"><span class="toc-num">7.</span> Sincronización y trabajo sin conexión</a></li>
+  </ul>
+</div>
+
+<div class="doc-body">
+
+  <div class="section" id="s1">
+    <div class="section-num">Sección 1</div>
+    <div class="section-title">¿Qué es el panel médico?</div>
+    <p>El <strong>panel médico</strong> es una aplicación web que te permite acceder a las fichas médicas de todos los participantes de un viaje de egresados y registrar cada atención que realizás durante el viaje. Toda la información se guarda automáticamente en una planilla de Google Sheets compartida.</p>
+    <p>No requiere instalación. Funciona en el navegador del celular o de la computadora.</p>
+    <div class="callout callout-info">
+      <div class="callout-title">Importante</div>
+      El link para ingresar te lo envía la organizadora del viaje. También podés guardarlo en favoritos del navegador para tenerlo siempre a mano.
+    </div>
+  </div>
+
+  <div class="section" id="s2">
+    <div class="section-num">Sección 2</div>
+    <div class="section-title">Primer acceso e identificación</div>
+    <p>La primera vez que abrís el panel, aparece un formulario pidiendo tu nombre y matrícula.</p>
+    <ol class="steps">
+      <li><span class="step-num">1</span><span class="step-text">Ingresá tu <strong>nombre completo</strong> (ej: Dr. Juan García)</span></li>
+      <li><span class="step-num">2</span><span class="step-text">Ingresá tu <strong>matrícula</strong> (ej: MP 12345). Este campo es opcional pero recomendado.</span></li>
+      <li><span class="step-num">3</span><span class="step-text">Hacé clic en <strong>Continuar</strong>.</span></li>
+    </ol>
+    <div class="callout callout-tip">
+      <div class="callout-title">Tip</div>
+      Tus datos quedan guardados en el dispositivo. Las próximas veces que abras el panel no te los va a pedir de nuevo. Si querés cambiarlos, tocá tu nombre en el encabezado de la pantalla.
+    </div>
+  </div>
+
+  <div class="section" id="s3">
+    <div class="section-num">Sección 3</div>
+    <div class="section-title">Seleccionar el viaje activo</div>
+    <p>Después de identificarte, el panel carga automáticamente la lista de viajes disponibles desde la planilla. Simplemente tocá el viaje que querés y hacé clic en <strong>Ingresar</strong>.</p>
+    <div class="callout callout-info">
+      <div class="callout-title">Si el viaje no aparece en la lista</div>
+      Pedile a la organizadora el <strong>ID del viaje</strong> e ingresalo en el campo "Ingresar con ID de viaje". El panel lo va a buscar automáticamente en la planilla y lo agrega a tu lista.
+    </div>
+    <p>Una vez seleccionado, el nombre del viaje aparece en la esquina superior derecha. Para cambiar de viaje en cualquier momento, tocá ese botón.</p>
+  </div>
+
+  <div class="section" id="s4">
+    <div class="section-num">Sección 4</div>
+    <div class="section-title">Pestaña Fichas — ver historial médico</div>
+    <p>Esta pestaña muestra a todos los participantes del viaje con su estado de ficha médica.</p>
+
+    <div class="tabs-demo">
+      <div class="tab-demo active">📋 Fichas</div>
+      <div class="tab-demo">🩺 Registrar</div>
+      <div class="tab-demo">📁 Historial</div>
+    </div>
+    <div class="tab-content-demo">
+      Lista de participantes con nombre, colegio, estado y alertas médicas.
+    </div>
+
+    <h3>Estado de la ficha</h3>
+    <ul>
+      <li><strong>✓ Completa</strong> (verde): el participante completó su ficha. Podés expandirla para ver todos los datos.</li>
+      <li><strong>Sin ficha</strong> (ámbar): el participante no completó el formulario todavía.</li>
+    </ul>
+
+    <h3>Badges de alerta</h3>
+    <p>Cada participante con ficha completa muestra badges de colores indicando sus antecedentes:</p>
+    <div class="badges-demo">
+      <span class="badge b-rojo">⚠ ALERGIA: Penicilina</span>
+      <span class="badge b-ambar">💊 MEDICACIÓN: Ibuprofeno</span>
+      <span class="badge b-azul">ANT.: Asma leve</span>
+      <span class="badge b-verde">✓ Sin alertas</span>
+    </div>
+    <ul>
+      <li><strong>Rojo (ALERGIA)</strong>: el participante declaró alergias. Prestá especial atención.</li>
+      <li><strong>Ámbar (MEDICACIÓN)</strong>: está tomando medicación habitual.</li>
+      <li><strong>Azul (ANT.)</strong>: tiene enfermedades crónicas o antecedentes relevantes.</li>
+      <li><strong>Verde (Sin alertas)</strong>: no declaró ninguna condición médica conocida.</li>
+    </ul>
+
+    <h3>Ver ficha completa</h3>
+    <p>Tocá el nombre del participante para expandir su ficha. Vas a ver grupo sanguíneo, contacto de emergencia, obra social, tutor, y toda la información que completó.</p>
+
+    <h3>Filtros disponibles</h3>
+    <ul>
+      <li><strong>Todas</strong>: muestra todos los participantes.</li>
+      <li><strong>Sin ficha</strong>: solo los que no completaron el formulario.</li>
+      <li><strong>Con alertas</strong>: solo los que tienen alergia, medicación o antecedentes.</li>
+      <li><strong>Menores</strong>: solo participantes menores de 18 años.</li>
+    </ul>
+    <p>También podés buscar por nombre o filtrar por colegio usando los controles del encabezado.</p>
+
+    <div class="callout callout-tip">
+      <div class="callout-title">Actualización automática</div>
+      Las fichas se sincronizan con Sheets cada 5 minutos. Si un participante completó su ficha recién, tocá el botón ↺ para actualizar manualmente.
+    </div>
+  </div>
+
+  <div class="section" id="s5">
+    <div class="section-num">Sección 5</div>
+    <div class="section-title">Pestaña Registro — cargar una atención</div>
+    <p>Usá esta pestaña para documentar cada atención médica que realizás durante el viaje.</p>
+
+    <h3>Contexto de atención</h3>
+    <p>Este bloque se completa una sola vez por sesión de trabajo. Incluye fecha (se completa automáticamente), hora (se actualiza sola), sede/ubicación y profesional que atiende.</p>
+    <div class="callout callout-tip">
+      <div class="callout-title">Tip</div>
+      Después de guardar el primer registro, el bloque de contexto se colapsa automáticamente para agilizar los registros siguientes. Podés tocarlo para expandirlo si necesitás cambiar la sede u hora.
+    </div>
+
+    <h3>Participante</h3>
+    <p>Seleccioná el participante del desplegable. Si tiene ficha médica completa, aparece un resumen de sus alertas inmediatamente debajo de la selección:</p>
+    <div class="field-demo">⚠ ALERGIA: Penicilina<br>💊 MEDICACIÓN: Amoxicilina 500mg</div>
+    <p>Si la persona no está en la lista (acompañante, conductor, etc.) seleccioná <strong>"Otro / No está en la lista"</strong> e ingresá el nombre manualmente.</p>
+
+    <h3>Datos clínicos</h3>
+    <ul>
+      <li><strong>Motivo de consulta</strong> (obligatorio): descripción breve del motivo.</li>
+      <li><strong>Zona afectada</strong>: área del cuerpo involucrada.</li>
+      <li><strong>Diagnóstico presuntivo</strong>: impresión diagnóstica.</li>
+      <li><strong>Atención realizada</strong> (obligatorio): qué se hizo.</li>
+      <li><strong>Observaciones</strong>: evolución, indicaciones, seguimiento.</li>
+    </ul>
+
+    <h3>Derivación</h3>
+    <p>Activá el toggle si el participante fue derivado. Se habilita un campo para detallar el destino y el motivo de la derivación.</p>
+
+    <h3>Guardar el registro</h3>
+    <p>Tocá <strong>Guardar registro</strong>. El registro se guarda localmente y se envía automáticamente a la planilla de Sheets. Si no hay conexión en ese momento, se reintenta en cuanto vuelve la señal.</p>
+
+    <div class="callout callout-warn">
+      <div class="callout-title">Campos obligatorios</div>
+      Fecha, sede, profesional, participante, motivo y atención realizada son obligatorios. El botón guardar no avanza si falta alguno.
+    </div>
+  </div>
+
+  <div class="section" id="s6">
+    <div class="section-num">Sección 6</div>
+    <div class="section-title">Pestaña Historial — atenciones del viaje</div>
+    <p>Muestra todas las atenciones registradas en el viaje con estadísticas y filtros.</p>
+
+    <h3>Estadísticas (barra superior)</h3>
+    <ul>
+      <li><strong>Total</strong>: cantidad de atenciones registradas.</li>
+      <li><strong>Derivaciones</strong>: cuántos pacientes fueron derivados.</li>
+      <li><strong>Menores</strong>: atenciones a menores de 18 años.</li>
+      <li><strong>Profesionales</strong>: cuántos profesionales distintos registraron atenciones.</li>
+    </ul>
+
+    <h3>Filtros</h3>
+    <p>Podés filtrar por nombre del participante, por derivación (con/sin) y por profesional.</p>
+
+    <h3>Ver ficha desde el historial</h3>
+    <p>En cada registro aparece un botón <strong>📋 Ficha</strong> que muestra la ficha médica completa del participante sin tener que ir a la pestaña Fichas.</p>
+
+    <h3>Exportar CSV</h3>
+    <p>El botón <strong>↓ CSV</strong> descarga un archivo con todas las atenciones del viaje. Compatible con Excel y Google Sheets para análisis posterior.</p>
+  </div>
+
+  <div class="section" id="s7">
+    <div class="section-num">Sección 7</div>
+    <div class="section-title">Sincronización y trabajo sin conexión</div>
+    <p>El panel está diseñado para funcionar aunque la señal sea intermitente, como sucede en muchas sedes de viajes de egresados.</p>
+    <ul>
+      <li>Los datos de fichas y atenciones se guardan localmente en el navegador (caché).</li>
+      <li>Si no hay conexión, el panel sigue funcionando con la última información disponible y muestra un aviso en la parte superior.</li>
+      <li>Cuando la conexión vuelve, los registros guardados se sincronizan automáticamente con la planilla.</li>
+      <li>La actualización automática ocurre cada <strong>5 minutos</strong> mientras el panel está abierto.</li>
+    </ul>
+    <div class="callout callout-info">
+      <div class="callout-title">Recomendación</div>
+      Dejá el panel abierto durante todo el viaje para que la sincronización automática funcione. Si cerraste el navegador, al volver a abrir el panel se reconecta y actualiza automáticamente.
+    </div>
+  </div>
+
+</div>
+
+<div class="doc-footer">
+  Alma Salud &mdash; Sistema de gestión médica para viajes de egresados &mdash; Documento confidencial
+</div>
+
+</div>
+</body>
+</html>
