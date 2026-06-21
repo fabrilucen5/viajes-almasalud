@@ -196,7 +196,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     <div id="modal-viajes-lista" style="max-height:220px;overflow-y:auto;margin-bottom:14px">
       <div class="loading-wrap"><div class="spinner"></div>Buscando viajes...</div>
     </div>
-    <div style="border-top:1px solid var(--border);padding-top:12px;margin-bottom:10px">
+    <div id="manual-viaje-section" style="display:none;border-top:1px solid var(--border);padding-top:12px;margin-bottom:10px">
       <div style="font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">&#128279; Ingresar con ID de viaje</div>
       <div style="display:flex;gap:8px">
         <input type="text" id="manual-viaje-id" placeholder="Peg&aacute; el ID del viaje" autocomplete="off" style="flex:1;font-size:14px;padding:10px 12px"
@@ -533,20 +533,30 @@ window.selectViaje = function(id, el){
 
 async function renderModalViajes(){
   const el=document.getElementById('modal-viajes-lista');
+  const manualSec=document.getElementById('manual-viaje-section');
   if(!el) return;
-  el.innerHTML='<div class="loading-wrap"><div class="spinner"></div>Buscando viajes...</div>';
+  el.innerHTML='<div class="loading-wrap"><div class="spinner"></div>Buscando viajes en Sheets...</div>';
+  if(manualSec) manualSec.style.display='none';
   let lista=lsJson(VIAJES_KEY)||[];
+  let fetchOk=false;
   try{
     const r=await sheetGet({tipo:'get_all_viajes'});
-    if(r.ok&&r.viajes&&r.viajes.length){
-      const sheetsIds=new Set(r.viajes.map(v=>String(v.id)));
-      const soloLocal=lista.filter(v=>!sheetsIds.has(String(v.id)));
-      lista=[...r.viajes,...soloLocal];
-      lsSet(VIAJES_KEY,JSON.stringify(lista));
+    if(r.ok&&r.viajes){
+      if(r.viajes.length){
+        const sheetsIds=new Set(r.viajes.map(v=>String(v.id)));
+        const soloLocal=lista.filter(v=>!sheetsIds.has(String(v.id)));
+        lista=[...r.viajes,...soloLocal];
+        lsSet(VIAJES_KEY,JSON.stringify(lista));
+      }
+      fetchOk=true;
     }
   }catch(e){}
   if(!lista.length){
-    el.innerHTML='<div class="empty">No se encontraron viajes.<br><small>Veric&aacute; que al menos un viaje est&eacute; creado desde el panel admin.</small></div>';
+    el.innerHTML='<div class="empty">'
+      +(fetchOk?'No hay viajes creados todav&iacute;a.<br><small>Cre&aacute; un viaje desde el panel admin primero.</small>'
+               :'Sin conexi&oacute;n a Sheets.<br><small>Ingres&aacute; el ID del viaje manualmente.</small>')
+      +'</div>';
+    if(manualSec) manualSec.style.display='block';
     selectedId=null;
     return;
   }
