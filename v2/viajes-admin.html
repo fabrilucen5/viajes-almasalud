@@ -572,10 +572,21 @@ window.enviarWhatsApp = function(idx){
   const link = generarLink(viajeActual.id, p.id, viajeActual.nombre, p.nombre);
   const text = 'Hola '+p.nombre+'!\n\nTe enviamos el link para completar tu ficha médica del viaje:\n'+link+'\n\nEs importante que la completes antes del viaje. ¡Gracias!';
   const tel = extraerTelefono(p.contacto);
-  const waUrl = tel
-    ? 'https://wa.me/'+tel+'?text='+encodeURIComponent(text)
-    : 'https://wa.me/?text='+encodeURIComponent(text);
-  window.open(waUrl,'_blank');
+  if(tel){
+    const a=document.createElement('a');
+    a.href='https://wa.me/'+tel+'?text='+encodeURIComponent(text);
+    a.target='_blank';a.rel='noopener noreferrer';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+  } else {
+    // Sin número: copiar mensaje al portapapeles
+    if(navigator.clipboard){
+      navigator.clipboard.writeText(text).then(()=>
+        mostrarAlerta('alerta-p','Mensaje copiado. Peg&aacute;lo en WhatsApp al contacto de <strong>'+esc(p.nombre)+'</strong>.','ok')
+      );
+    } else {
+      prompt('Copi&aacute; el mensaje para '+p.nombre+':',text);
+    }
+  }
 };
 
 window.copiarLink = function(link, btn){
